@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.log
+
+# Virtual environment
+.venv/
+venv/
+
+# Runtime data
+data/logs/
+data/output/
+data/reports/
+data/database/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# ML models
+*.pt

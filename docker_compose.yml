@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  forensic-analyzer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: forensic-analyzer:latest
+    container_name: forensic-analyzer
+    restart: unless-stopped
+
+    environment:
+      PYTHONPATH: /app
+      LOG_LEVEL: INFO
+      MAX_WORKERS: 4
+      BATCH_SIZE: 10
+
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - ./input_images:/app/input_images:ro
+
+    ports:
+      - "8080:8080"   # future API use
+
+    networks:
+      - forensic-network
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import cv2, numpy; print('Healthy')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    command: ["python", "main.py", "--help"]
+
+networks:
+  forensic-network:
+    driver: bridge
