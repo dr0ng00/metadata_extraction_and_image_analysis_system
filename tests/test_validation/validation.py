@@ -1,0 +1,761 @@
+"""
+Validation Test Suite for MetaForensicAI
+
+This module contains comprehensive validation tests using ground truth datasets
+to verify system accuracy, reliability, and forensic correctness.
+"""
+
+import os
+import json
+import yaml
+from pathlib import Path
+import hashlib
+from typing import Dict, List, Any, Tuple
+
+__all__ = [
+    'ValidationSuite',
+    'DatasetValidator',
+    'PerformanceEvaluator',
+    'GroundTruthLoader'
+]
+
+class GroundTruthLoader:
+    """Load and manage ground truth datasets for validation."""
+    
+    def __init__(self, base_path: str | Path | None = None):
+        self.base_path = Path(base_path) if base_path else Path(__file__).parent
+        self.ground_truth = self._load_ground_truth()
+        
+    def _load_ground_truth(self) -> Dict[str, Any]:
+        """Load ground truth metadata from JSON file."""
+        gt_file = self.base_path / 'ground_truth_metadata.json'
+        if gt_file.exists():
+            with open(gt_file, 'r') as f:
+                return json.load(f)
+        return {}
+    
+    def get_image_metadata(self, image_path: str) -> Dict[str, Any]:
+        """Get expected metadata for a specific image."""
+        rel_path = str(Path(image_path).relative_to(self.base_path))
+        return self.ground_truth.get(rel_path, {})
+    
+    def get_category_expected_results(self, category: str) -> Dict[str, Any]:
+        """Get expected results for a specific category."""
+        expected_file = self.base_path / 'expected_results' / f'{category}_expected.json'
+        if expected_file.exists():
+            with open(expected_file, 'r') as f:
+                return json.load(f)
+        return {}
+
+class DatasetValidator:
+    """Validate test dataset integrity and completeness."""
+    
+    def __init__(self, dataset_path: str | Path):
+        self.dataset_path = Path(dataset_path)
+        self.validation_results = {}
+        
+    def validate_dataset_structure(self) -> Dict[str, Any]:
+        """Validate the dataset directory structure."""
+        results: Dict[str, Any] = {
+            'structure_valid': True,
+            'issues': [],
+            'statistics': {}
+        }
+        
+        # Check required directories
+        required_dirs = ['original_images', 'social_media_images', 'manipulated_images']
+        for dir_name in required_dirs:
+            dir_path = self.dataset_path / dir_name
+            if not dir_path.exists():
+                results['structure_valid'] = False
+                results['issues'].append(f'Missing directory: {dir_name}')
+            else:
+                # Count files in directory
+                file_count = len(list(dir_path.rglob('*.jpg'))) + \
+                           len(list(dir_path.rglob('*.jpeg'))) + \
+                           len(list(dir_path.rglob('*.png'))) + \
+                           len(list(dir_path.rglob('*.cr2'))) + \
+                           len(list(dir_path.rglob('*.nef')))
+                results['statistics'][dir_name] = file_count
+        
+        return results
+    
+    def validate_image_integrity(self) -> Dict[str, Any]:
+        """Validate integrity of all images in dataset."""
+        results: Dict[str, Any] = {
+            'total_images': 0,
+            'valid_images': 0,
+            'corrupted_images': [],
+            'hash_checks': {}
+        }
+        
+        # Find all image files
+        image_extensions = ['.jpg', '.jpeg', '.png', '.tiff', '.tif', '.cr2', '.nef', '.arw']
+        image_files = []
+        
+        for ext in image_extensions:
+            image_files.extend(self.dataset_path.rglob(f'*{ext}'))
+            image_files.extend(self.dataset_path.rglob(f'*{ext.upper()}'))
+        
+        results['total_images'] = len(image_files)
+        
+        # Validate each image
+        for img_path in image_files:
+            try:
+                # Try to open image
+                from PIL import Image
+                with Image.open(img_path) as img:
+                    img.verify()  # Verify integrity
+                    
+                # Calculate hash
+                with open(img_path, 'rb') as f:
+                    file_hash = hashlib.sha256(f.read()).hexdigest()
+                
+                results['hash_checks'][str(img_path)] = file_hash
+                results['valid_images'] += 1
+                
+            except Exception as e:
+                results['corrupted_images'].append({
+                    'path': str(img_path),
+                    'error': str(e)
+                })
+        
+        return results
+    
+    def generate_dataset_report(self) -> Dict[str, Any]:
+        """Generate comprehensive dataset validation report."""
+        structure = self.validate_dataset_structure()
+        integrity = self.validate_image_integrity()
+        
+        return {
+            'dataset_path': str(self.dataset_path),
+            'structure_validation': structure,
+            'integrity_validation': integrity,
+            'overall_status': 'VALID' if structure['structure_valid'] and \
+                                   integrity['valid_images'] == integrity['total_images'] \
+                                 else 'INVALID'
+        }
+
+class ValidationSuite:
+    """Main validation suite for testing system accuracy."""
+    
+    def __init__(self, forensic_system=None):
+        self.forensic_system = forensic_system
+        self.base_path = Path(__file__).parent
+        self.validator = DatasetValidator(self.base_path)
+        self.gt_loader = GroundTruthLoader(self.base_path)
+        self.results = {}
+        
+    def run_comprehensive_validation(self) -> Dict[str, Any]:
+        """Run all validation tests."""
+        validation_results: Dict[str, Any] = {
+            'timestamp': self.test_timestamp_accuracy(),
+            'origin_detection': self.test_origin_detection_accuracy(),
+            'authenticity': self.test_authenticity_detection(),
+            'risk_scoring': self.test_risk_scoring_consistency(),
+            'explanations': self.test_explanation_quality(),
+            'performance': self.test_performance_metrics(),
+            'dataset': self.validator.generate_dataset_report()
+        }
+        
+        # Calculate overall accuracy
+        accuracy_scores = []
+        for test_name, result in validation_results.items():
+            if 'accuracy' in result:
+                accuracy_scores.append(result['accuracy'])
+        
+        if accuracy_scores:
+            validation_results['overall_accuracy'] = sum(accuracy_scores) / len(accuracy_scores)
+        
+        self.results = validation_results
+        return validation_results
+    
+    def test_timestamp_accuracy(self) -> Dict[str, Any]:
+        """Test timestamp analysis accuracy."""
+        results: Dict[str, Any] = {
+            'test_name': 'Timestamp Analysis Accuracy',
+            'total_tests': 0,
+            'passed_tests': 0,
+            'failed_tests': 0,
+            'details': []
+        }
+        
+        # Test original images (should have consistent timestamps)
+        original_dir = self.base_path / 'original_images'
+        if original_dir.exists():
+            for img_file in original_dir.glob('*.jpg'):
+                if self.forensic_system:
+                    try:
+                        analysis = self.forensic_system.analyze_image(str(img_file))
+                        # Original images should not have timestamp inconsistencies
+                        timestamp_flags = [f for f in analysis.get('authenticity_flags', []) 
+                                         if 'TIMESTAMP' in f.get('type', '')]
+                        if not timestamp_flags:
+                            results['passed_tests'] += 1
+                            results['details'].append({
+                                'image': img_file.name,
+                                'status': 'PASS',
+                                'expected': 'No timestamp issues',
+                                'actual': 'No timestamp issues found'
+                            })
+                        else:
+                            results['failed_tests'] += 1
+                            results['details'].append({
+                                'image': img_file.name,
+                                'status': 'FAIL',
+                                'expected': 'No timestamp issues',
+                                'actual': f'Found {len(timestamp_flags)} timestamp issues'
+                            })
+                        results['total_tests'] += 1
+                    except Exception as e:
+                        results['details'].append({
+                            'image': img_file.name,
+                            'status': 'ERROR',
+                            'error': str(e)
+                        })
+        
+        # Test manipulated timestamp images
+        manipulated_dir = self.base_path / 'manipulated_images' / 'timestamp_edited'
+        if manipulated_dir.exists():
+            for img_file in manipulated_dir.glob('*.jpg'):
+                if self.forensic_system:
+                    try:
+                        analysis = self.forensic_system.analyze_image(str(img_file))
+                        timestamp_flags = [f for f in analysis.get('authenticity_flags', []) 
+                                         if 'TIMESTAMP' in f.get('type', '')]
+                        if timestamp_flags:
+                            results['passed_tests'] += 1
+                            results['details'].append({
+                                'image': img_file.name,
+                                'status': 'PASS',
+                                'expected': 'Timestamp issues',
+                                'actual': f'Found {len(timestamp_flags)} timestamp issues'
+                            })
+                        else:
+                            results['failed_tests'] += 1
+                            results['details'].append({
+                                'image': img_file.name,
+                                'status': 'FAIL',
+                                'expected': 'Timestamp issues',
+                                'actual': 'No timestamp issues found'
+                            })
+                        results['total_tests'] += 1
+                    except Exception as e:
+                        results['details'].append({
+                            'image': img_file.name,
+                            'status': 'ERROR',
+                            'error': str(e)
+                        })
+        
+        if results['total_tests'] > 0:
+            results['accuracy'] = results['passed_tests'] / results['total_tests']
+        
+        return results
+    
+    def test_origin_detection_accuracy(self) -> Dict[str, Any]:
+        """Test platform origin detection accuracy."""
+        results: Dict[str, Any] = {
+            'test_name': 'Origin Detection Accuracy',
+            'total_tests': 0,
+            'passed_tests': 0,
+            'failed_tests': 0,
+            'platform_accuracy': {},
+            'details': []
+        }
+        
+        # Test each platform
+        platforms = ['whatsapp', 'instagram', 'facebook', 'telegram', 'twitter']
+        
+        for platform in platforms:
+            platform_dir = self.base_path / 'social_media_images' / platform
+            if platform_dir.exists():
+                platform_results: Dict[str, Any] = {
+                    'total': 0,
+                    'passed': 0,
+                    'failed': 0
+                }
+                
+                for img_file in platform_dir.glob('*.jpg'):
+                    if self.forensic_system:
+                        try:
+                            analysis = self.forensic_system.analyze_image(str(img_file))
+                            origin = analysis.get('origin_detection', {}).get('primary_origin', '')
+                            
+                            # Check if platform detected (case-insensitive)
+                            if platform.lower() in origin.lower():
+                                results['passed_tests'] += 1
+                                platform_results['passed'] += 1
+                                status = 'PASS'
+                            else:
+                                results['failed_tests'] += 1
+                                platform_results['failed'] += 1
+                                status = 'FAIL'
+                            
+                            results['details'].append({
+                                'image': img_file.name,
+                                'platform': platform,
+                                'status': status,
+                                'expected': platform,
+                                'actual': origin
+                            })
+                            results['total_tests'] += 1
+                            platform_results['total'] += 1
+                            
+                        except Exception as e:
+                            results['details'].append({
+                                'image': img_file.name,
+                                'platform': platform,
+                                'status': 'ERROR',
+                                'error': str(e)
+                            })
+                
+                # Calculate platform accuracy
+                if platform_results['total'] > 0:
+                    results['platform_accuracy'][platform] = {
+                        'accuracy': platform_results['passed'] / platform_results['total'],
+                        'total': platform_results['total'],
+                        'passed': platform_results['passed'],
+                        'failed': platform_results['failed']
+                    }
+        
+        # Calculate overall accuracy
+        if results['total_tests'] > 0:
+            results['accuracy'] = results['passed_tests'] / results['total_tests']
+        
+        return results
+    
+    def test_authenticity_detection(self) -> Dict[str, Any]:
+        """Test image authenticity detection."""
+        results: Dict[str, Any] = {
+            'test_name': 'Authenticity Detection',
+            'total_tests': 0,
+            'passed_tests': 0,
+            'failed_tests': 0,
+            'details': []
+        }
+        
+        # Test original images (should be authentic)
+        original_dir = self.base_path / 'original_images'
+        if original_dir.exists():
+            for img_file in original_dir.glob('*.jpg'):
+                if self.forensic_system:
+                    try:
+                        analysis = self.forensic_system.analyze_image(str(img_file))
+                        risk_score = analysis.get('risk_assessment', {}).get('score', 100)
+                        
+                        # Original images should have low risk score (<40)
+                        if risk_score < 40:
+                            results['passed_tests'] += 1
+                            status = 'PASS'
+                        else:
+                            results['failed_tests'] += 1
+                            status = 'FAIL'
+                        
+                        results['details'].append({
+                            'image': img_file.name,
+                            'category': 'original',
+                            'status': status,
+                            'risk_score': risk_score,
+                            'expected': 'low risk (<40)',
+                            'actual': f'risk = {risk_score}'
+                        })
+                        results['total_tests'] += 1
+                        
+                    except Exception as e:
+                        results['details'].append({
+                            'image': img_file.name,
+                            'category': 'original',
+                            'status': 'ERROR',
+                            'error': str(e)
+                        })
+        
+        # Test manipulated images (should have high risk)
+        manipulated_categories = ['timestamp_edited', 'software_edited', 'recompressed']
+        for category in manipulated_categories:
+            category_dir = self.base_path / 'manipulated_images' / category
+            if category_dir.exists():
+                for img_file in category_dir.glob('*.jpg'):
+                    if self.forensic_system:
+                        try:
+                            analysis = self.forensic_system.analyze_image(str(img_file))
+                            risk_score = analysis.get('risk_assessment', {}).get('score', 0)
+                            
+                            # Manipulated images should have higher risk score (>50)
+                            if risk_score > 50:
+                                results['passed_tests'] += 1
+                                status = 'PASS'
+                            else:
+                                results['failed_tests'] += 1
+                                status = 'FAIL'
+                            
+                            results['details'].append({
+                                'image': img_file.name,
+                                'category': category,
+                                'status': status,
+                                'risk_score': risk_score,
+                                'expected': 'high risk (>50)',
+                                'actual': f'risk = {risk_score}'
+                            })
+                            results['total_tests'] += 1
+                            
+                        except Exception as e:
+                            results['details'].append({
+                                'image': img_file.name,
+                                'category': category,
+                                'status': 'ERROR',
+                                'error': str(e)
+                            })
+        
+        if results['total_tests'] > 0:
+            results['accuracy'] = results['passed_tests'] / results['total_tests']
+        
+        return results
+    
+    def test_risk_scoring_consistency(self) -> Dict[str, Any]:
+        """Test risk scoring consistency across similar images."""
+        results: Dict[str, Any] = {
+            'test_name': 'Risk Scoring Consistency',
+            'consistency_score': 0,
+            'variance': 0,
+            'details': []
+        }
+        
+        # Test with multiple original images
+        original_dir = self.base_path / 'original_images'
+        risk_scores = []
+        
+        if original_dir.exists():
+            for img_file in list(original_dir.glob('*.jpg'))[:5]:  # Test first 5
+                if self.forensic_system:
+                    try:
+                        analysis = self.forensic_system.analyze_image(str(img_file))
+                        risk_score = analysis.get('risk_assessment', {}).get('score', 0)
+                        risk_scores.append(risk_score)
+                        
+                        results['details'].append({
+                            'image': img_file.name,
+                            'risk_score': risk_score
+                        })
+                    except Exception as e:
+                        results['details'].append({
+                            'image': img_file.name,
+                            'error': str(e)
+                        })
+        
+        # Calculate consistency metrics
+        if len(risk_scores) >= 2:
+            import statistics
+            results['variance'] = statistics.variance(risk_scores)
+            # Lower variance = more consistent
+            results['consistency_score'] = max(0, 100 - (results['variance'] * 10))
+        
+        return results
+    
+    def test_explanation_quality(self) -> Dict[str, Any]:
+        """Test quality and completeness of explanations."""
+        results: Dict[str, Any] = {
+            'test_name': 'Explanation Quality Assessment',
+            'total_tests': 0,
+            'passed_tests': 0,
+            'failed_tests': 0,
+            'details': []
+        }
+        
+        # Test with a sample of images
+        test_images = []
+        
+        # Add one from each category
+        original_dir = self.base_path / 'original_images'
+        if original_dir.exists():
+            test_images.extend(list(original_dir.glob('*.jpg'))[:1])
+        
+        manipulated_dir = self.base_path / 'manipulated_images' / 'timestamp_edited'
+        if manipulated_dir.exists():
+            test_images.extend(list(manipulated_dir.glob('*.jpg'))[:1])
+        
+        social_dir = self.base_path / 'social_media_images' / 'whatsapp'
+        if social_dir.exists():
+            test_images.extend(list(social_dir.glob('*.jpg'))[:1])
+        
+        for img_file in test_images:
+            if self.forensic_system:
+                try:
+                    analysis = self.forensic_system.analyze_image(str(img_file))
+                    explanations = analysis.get('explanations', {})
+                    
+                    # Check explanation completeness
+                    required_sections = ['summary', 'key_findings', 'metadata_contributors']
+                    missing_sections = [s for s in required_sections if s not in explanations]
+                    
+                    if not missing_sections and explanations.get('summary'):
+                        results['passed_tests'] += 1
+                        status = 'PASS'
+                    else:
+                        results['failed_tests'] += 1
+                        status = 'FAIL'
+                    
+                    results['details'].append({
+                        'image': img_file.name,
+                        'status': status,
+                        'explanation_present': bool(explanations),
+                        'missing_sections': missing_sections,
+                        'summary_length': len(explanations.get('summary', ''))
+                    })
+                    results['total_tests'] += 1
+                    
+                except Exception as e:
+                    results['details'].append({
+                        'image': img_file.name,
+                        'status': 'ERROR',
+                        'error': str(e)
+                    })
+        
+        if results['total_tests'] > 0:
+            results['accuracy'] = results['passed_tests'] / results['total_tests']
+        
+        return results
+    
+    def test_performance_metrics(self) -> Dict[str, Any]:
+        """Test system performance metrics."""
+        results: Dict[str, Any] = {
+            'test_name': 'Performance Metrics',
+            'metrics': {},
+            'details': []
+        }
+        
+        import time
+        
+        # Test with sample images
+        test_images = list((self.base_path / 'original_images').glob('*.jpg'))[:3]
+        
+        execution_times = []
+        memory_usage = []
+        
+        for img_file in test_images:
+            if self.forensic_system:
+                try:
+                    # Measure execution time
+                    start_time = time.time()
+                    analysis = self.forensic_system.analyze_image(str(img_file))
+                    end_time = time.time()
+                    
+                    execution_time = end_time - start_time
+                    execution_times.append(execution_time)
+                    
+                    # Get file size
+                    file_size = img_file.stat().st_size / (1024 * 1024)  # MB
+                    
+                    results['details'].append({
+                        'image': img_file.name,
+                        'file_size_mb': round(file_size, 2),
+                        'execution_time_seconds': round(execution_time, 2),
+                        'risk_score': analysis.get('risk_assessment', {}).get('score', 0)
+                    })
+                    
+                except Exception as e:
+                    results['details'].append({
+                        'image': img_file.name,
+                        'error': str(e)
+                    })
+        
+        # Calculate performance metrics
+        if execution_times:
+            import statistics
+            results['metrics'] = {
+                'avg_execution_time': statistics.mean(execution_times),
+                'min_execution_time': min(execution_times),
+                'max_execution_time': max(execution_times),
+                'throughput': len(execution_times) / sum(execution_times) if sum(execution_times) > 0 else 0
+            }
+        
+        return results
+    
+    def generate_validation_report(self, output_path: str | None = None) -> str:
+        """Generate comprehensive validation report."""
+        if not self.results:
+            self.run_comprehensive_validation()
+        
+        report = self._format_validation_report()
+        
+        if output_path:
+            output_file = Path(output_path) / 'validation_report.md'
+            with open(output_file, 'w') as f:
+                f.write(report)
+            
+            # Also save JSON results
+            json_file = Path(output_path) / 'validation_results.json'
+            with open(json_file, 'w') as f:
+                json.dump(self.results, f, indent=2)
+        
+        return report
+    
+    def _format_validation_report(self) -> str:
+        """Format validation results as markdown report."""
+        report = [
+            "# MetaForensicAI Validation Report",
+            f"Generated: {self._get_timestamp()}",
+            "",
+            "## Executive Summary",
+            ""
+        ]
+        
+        # Calculate overall metrics
+        total_tests = 0
+        passed_tests = 0
+        
+        for test_name, result in self.results.items():
+            if isinstance(result, dict) and 'total_tests' in result:
+                total_tests += result.get('total_tests', 0)
+                passed_tests += result.get('passed_tests', 0)
+        
+        overall_accuracy = (passed_tests / total_tests * 100) if total_tests > 0 else 0
+        
+        report.extend([
+            f"- **Overall Accuracy**: {overall_accuracy:.2f}%",
+            f"- **Total Tests**: {total_tests}",
+            f"- **Passed Tests**: {passed_tests}",
+            f"- **Failed Tests**: {total_tests - passed_tests}",
+            ""
+        ])
+        
+        # Detailed results for each test
+        for test_name, result in self.results.items():
+            if isinstance(result, dict) and 'test_name' in result:
+                report.extend([
+                    f"## {result['test_name']}",
+                    ""
+                ])
+                
+                if 'accuracy' in result:
+                    report.append(f"- **Accuracy**: {result['accuracy']*100:.2f}%")
+                
+                if 'total_tests' in result:
+                    report.extend([
+                        f"- **Total Tests**: {result['total_tests']}",
+                        f"- **Passed**: {result['passed_tests']}",
+                        f"- **Failed**: {result['failed_tests']}",
+                        ""
+                    ])
+                
+                # Add key metrics
+                for key, value in result.items():
+                    if key not in ['test_name', 'total_tests', 'passed_tests', 
+                                 'failed_tests', 'details', 'accuracy']:
+                        if isinstance(value, (int, float)):
+                            report.append(f"- **{key.replace('_', ' ').title()}**: {value:.2f}")
+                        elif isinstance(value, dict):
+                            report.append(f"- **{key.replace('_', ' ').title()}**:")
+                            for sub_key, sub_value in value.items():
+                                report.append(f"  - {sub_key}: {sub_value}")
+                
+                report.append("")
+        
+        # Recommendations
+        report.extend([
+            "## Recommendations",
+            "",
+            "Based on validation results:",
+            ""
+        ])
+        
+        # Generate recommendations
+        recommendations = self._generate_recommendations()
+        for rec in recommendations:
+            report.append(f"- {rec}")
+        
+        report.append("")
+        
+        return '\n'.join(report)
+    
+    def _generate_recommendations(self) -> List[str]:
+        """Generate recommendations based on validation results."""
+        recommendations = []
+        
+        # Check timestamp accuracy
+        timestamp_result = self.results.get('timestamp', {})
+        if timestamp_result.get('accuracy', 0) < 0.9:
+            recommendations.append("Improve timestamp analysis algorithm")
+        
+        # Check origin detection
+        origin_result = self.results.get('origin_detection', {})
+        if origin_result.get('accuracy', 0) < 0.8:
+            recommendations.append("Enhance platform fingerprint database")
+        
+        # Check performance
+        perf_result = self.results.get('performance', {}).get('metrics', {})
+        avg_time = perf_result.get('avg_execution_time', 10)
+        if avg_time > 5:
+            recommendations.append(f"Optimize performance (current: {avg_time:.2f}s per image)")
+        
+        if not recommendations:
+            recommendations.append("System meets validation criteria")
+        
+        return recommendations
+    
+    def _get_timestamp(self) -> str:
+        """Get current timestamp for reporting."""
+        from datetime import datetime
+        return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+class PerformanceEvaluator:
+    """Evaluate system performance with different datasets."""
+    
+    def __init__(self, forensic_system):
+        self.forensic_system = forensic_system
+        self.metrics = {}
+    
+    def evaluate_batch_performance(self, image_count: int = 10) -> Dict[str, Any]:
+        """Evaluate performance with batch processing."""
+        import time
+        import psutil
+        import os
+        
+        results: Dict[str, Any] = {
+            'image_count': image_count,
+            'execution_times': [],
+            'memory_usage': [],
+            'cpu_usage': []
+        }
+        
+        # Get test images
+        test_dir = Path(__file__).parent / 'original_images'
+        test_images = list(test_dir.glob('*.jpg'))[:image_count]
+        
+        if not test_images:
+            return results
+        
+        process = psutil.Process(os.getpid())
+        
+        for img_file in test_images:
+            # Measure memory before
+            mem_before = process.memory_info().rss / 1024 / 1024  # MB
+            
+            # Measure time
+            start_time = time.time()
+            analysis = self.forensic_system.analyze_image(str(img_file))
+            end_time = time.time()
+            
+            # Measure memory after
+            mem_after = process.memory_info().rss / 1024 / 1024  # MB
+            
+            execution_time = end_time - start_time
+            memory_delta = mem_after - mem_before
+            
+            results['execution_times'].append(execution_time)
+            results['memory_usage'].append(memory_delta)
+            results['cpu_usage'].append(process.cpu_percent())
+        
+        # Calculate statistics
+        if results['execution_times']:
+            import statistics
+            results['avg_execution_time'] = statistics.mean(results['execution_times'])
+            results['total_execution_time'] = sum(results['execution_times'])
+            results['throughput'] = image_count / results['total_execution_time']
+        
+        return results
+
+# Export validation function
+def run_full_validation(system=None):
+    """Run full validation suite and return results."""
+    suite = ValidationSuite(system)
+    return suite.run_comprehensive_validation()

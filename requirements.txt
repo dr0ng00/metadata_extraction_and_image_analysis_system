@@ -1,37 +1,18 @@
-# requirements.txt
 
-# Core dependencies
-numpy>=1.24.0
-opencv-python>=4.8.0
-opencv-python-headless>=4.8.0  # Lightweight alternative
-Pillow>=10.0.0
-scipy>=1.11.0
+PyYAML
+Pillow>=9.0.0
+pillow-heif>=0.10.0
+exifread>=3.0.0
+numpy>=1.21.0
+pandas>=1.3.0
+psutil>=5.9.0
+tqdm>=4.50.0
+matplotlib>=3.5.0
+seaborn>=0.12.0
+scikit-learn>=1.0.0
+ImageHash>=4.2.0
+reportlab>=4.0.0
 
-# Data processing
-pandas>=2.0.0
-scikit-learn>=1.3.0
-
-# Machine Learning (optional - comment out if not needed)
-torch>=2.0.0
-torchvision>=0.15.0
-tensorflow>=2.13.0  # Optional for different ML frameworks
-
-# Logging and monitoring
-loguru>=0.7.0
-prometheus-client>=0.17.0  # For metrics
-
-# Utilities
-python-multipart>=0.0.6
-python-dotenv>=1.0.0
-tqdm>=4.65.0  # Progress bars
-joblib>=1.3.0  # For parallel processing
-
-# Testing and development (can be in dev-requirements.txt)
-pytest>=7.4.0
-pytest-cov>=4.1.0
-black>=23.0.0
-flake8>=6.0.0
-mypy>=1.5.0
-
-# Performance
-numba>=0.57.0  # JIT compilation for performance
+# Optional dependencies for advanced features
+# torch>=2.0.0  # For GPU acceleration and AI models (large package, install separately if needed)
+# opencv-python>=4.8.0  # For advanced image processing

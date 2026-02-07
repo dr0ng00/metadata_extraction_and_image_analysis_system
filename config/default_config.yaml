@@ -1,0 +1,577 @@
+# MetaForensicAI Default Configuration
+# Version: 1.0.0
+# Last Updated: 2024-01-15
+# Forensic Compliance: ISO 27037, NIST SP 800-86, ACPO Guidelines
+
+# ============================================================================
+# SYSTEM CONFIGURATION
+# ============================================================================
+system:
+  # Basic system identification
+  name: "MetaForensicAI"
+  version: "1.0.0"
+  build: "2024.01.15"
+  
+  # Operational settings
+  debug: false
+  verbose: false
+  language: "en_US"
+  timezone: "UTC"
+  locale: "en_US.UTF-8"
+  
+  # Performance settings
+  max_file_size_mb: 500
+  max_memory_usage_mb: 4096
+  max_analysis_time_seconds: 600
+  max_concurrent_analyses: 4
+  use_multiprocessing: true
+  
+  # File handling
+  temp_dir: "./forensic_workspace/temp"
+  backup_dir: "./forensic_workspace/backups"
+  evidence_dir: "./evidence"
+  results_dir: "./results"
+  
+  # Security settings
+  encrypt_temp_files: false
+  shred_temp_files: true
+  mask_sensitive_data: true
+  anonymize_reports: false
+
+# ============================================================================
+# FORENSIC INTEGRITY CONFIGURATION
+# ============================================================================
+forensic:
+  # Evidence integrity
+  read_only: true
+  verify_before_analysis: true
+  verify_after_analysis: true
+  create_forensic_copy: true
+  preserve_original: true
+  
+  # Hash algorithms and verification
+  hash_algorithms:
+    primary: "sha256"
+    secondary: "sha3_256"
+    legacy: "md5"
+    verification: "blake2b"
+  
+  hash_verification:
+    verify_on_load: true
+    verify_on_save: true
+    store_hashes: true
+    compare_hashes: true
+  
+  # Chain of custody
+  chain_of_custody:
+    enabled: true
+    log_all_operations: true
+    timestamp_precision: "microsecond"
+    include_hashes: true
+    include_metadata: true
+    export_format: "json"
+  
+  # Audit logging
+  audit_logging:
+    enabled: true
+    level: "INFO"
+    max_log_size_mb: 100
+    backup_count: 10
+    compress_old_logs: true
+    
+  # Forensic workspace
+  workspace:
+    create_isolated: true
+    clean_on_start: true
+    clean_on_exit: true
+    quarantine_suspicious: true
+
+# ============================================================================
+# METADATA EXTRACTION CONFIGURATION
+# ============================================================================
+metadata:
+  # Extraction tools
+  use_exiftool: true
+  use_pil: true
+  use_exifread: true
+  fallback_methods: true
+  
+  # Metadata sections to extract
+  extract_sections:
+    exif: true
+    xmp: true
+    iptc: true
+    gps: true
+    makernotes: true
+    composite: true
+    file: true
+    dublin_core: false
+    photoshop: true
+    icc_profile: true
+    thumbnail: true
+  
+  # Advanced extraction
+  extract_binary: false
+  extract_unknown: true
+  parse_makernotes: true
+  decode_gps: true
+  normalize_dates: true
+  
+  # Output control
+  max_metadata_size_kb: 1024
+  include_raw_output: false
+  compress_metadata: false
+
+# ============================================================================
+# FORENSIC ANALYSIS CONFIGURATION
+# ============================================================================
+analysis:
+  # Analysis modules to enable
+  modules:
+    timestamp_analysis: true
+    software_analysis: true
+    compression_analysis: true
+    metadata_integrity: true
+    platform_detection: true
+    gps_analysis: true
+    origin_assessment: true
+    contextual_analysis: true
+    object_detection: false  # Optional, for relevance only
+    
+  # Timestamp analysis
+  timestamp:
+    threshold_seconds: 3600
+    timezone_aware: true
+    check_ordering: true
+    detect_backdating: true
+    detect_futures: true
+    normalize_timezones: true
+    
+  # Compression analysis
+  compression:
+    jpeg_quality_threshold: 85
+    double_compression_confidence: 0.7
+    quantization_anomaly_threshold: 0.5
+    analyze_thumbnails: true
+    detect_resaving: true
+    
+  # Platform detection
+  platform:
+    detection_threshold: 0.6
+    fingerprint_match_min: 3
+    check_watermarks: true
+    check_dimensions: true
+    check_metadata_patterns: true
+    
+    known_platforms:
+      - "WhatsApp"
+      - "Instagram"
+      - "Telegram"
+      - "Facebook"
+      - "Twitter"
+      - "Signal"
+      - "Email"
+      - "Cloud_Storage"
+      - "Direct_Camera"
+      - "Screenshot"
+      - "Edited_Image"
+    
+  # GPS analysis
+  gps:
+    validate_coordinates: true
+    check_altitude: true
+    check_precision: true
+    detect_defaults: true
+    verify_timestamps: true
+    
+    anomaly_thresholds:
+      altitude_min: -1000  # meters (Dead Sea is -430m)
+      altitude_max: 9000   # meters (Mount Everest is 8848m)
+      coordinate_precision: 0.0001  # degrees (~11 meters)
+      
+  # Confidence thresholds
+  confidence:
+    high_threshold: 0.8
+    medium_threshold: 0.6
+    low_threshold: 0.4
+    minimum_confidence: 0.3
+
+# ============================================================================
+# RISK SCORING CONFIGURATION
+# ============================================================================
+risk_scoring:
+  # Risk calculation method
+  method: "weighted_sum"
+  normalize_scores: true
+  scale_factor: 100
+  
+  # Risk categories
+  categories:
+    - range: [0, 20]
+      label: "VERY_LOW"
+      description: "Likely original camera capture"
+      color: "#2ecc71"  # Green
+      
+    - range: [21, 40]
+      label: "LOW"
+      description: "Minor processing or transfer artifacts"
+      color: "#27ae60"  # Dark Green
+      
+    - range: [41, 60]
+      label: "MODERATE"
+      description: "Possibly edited or re-saved"
+      color: "#f39c12"  # Orange
+      
+    - range: [61, 80]
+      label: "HIGH"
+      description: "Significant manipulation indicators"
+      color: "#e74c3c"  # Red
+      
+    - range: [81, 100]
+      label: "VERY_HIGH"
+      description: "Strong evidence of tampering or fabrication"
+      color: "#c0392b"  # Dark Red
+  
+  # Weight adjustments
+  adjustments:
+    origin_direct_camera: -0.3
+    origin_social_media: 0.2
+    origin_edited: 0.4
+    metadata_complete: -0.2
+    metadata_stripped: 0.3
+
+# ============================================================================
+# EXPLANATION ENGINE CONFIGURATION
+# ============================================================================
+explanation:
+  # Explanation generation
+  generate_explanations: true
+  detail_level: "detailed"  # options: minimal, standard, detailed
+  include_evidence: true
+  include_confidence: true
+  include_alternatives: true
+  
+  # Language and formatting
+  language: "en"
+  technical_level: "intermediate"  # beginner, intermediate, expert
+  max_explanation_length: 1000
+  
+  # Explanation templates
+  templates:
+    timestamp: "Detected {count} timestamp inconsistencies across metadata fields."
+    software: "Software signature '{software}' doesn't match camera model '{model}'."
+    compression: "Found evidence of {cycles} compression cycles."
+    platform: "Image characteristics match {platform} platform patterns with {confidence}% confidence."
+    
+  # Court-admissible formatting
+  court_mode:
+    enabled: true
+    include_methodology: true
+    include_limitations: true
+    cite_standards: true
+    avoid_speculation: true
+
+# ============================================================================
+# REPORTING CONFIGURATION
+# ============================================================================
+reporting:
+  # Report generation
+  generate_pdf: true
+  generate_json: true
+  generate_html: false
+  generate_markdown: false
+  
+  # Output control
+  output_dir: "./results/reports"
+  filename_pattern: "{case_id}_{timestamp}_{risk_level}_{hash_short}"
+  overwrite_existing: false
+  timestamp_format: "%Y%m%d_%H%M%S"
+  
+  # PDF report settings
+  pdf:
+    page_size: "A4"
+    orientation: "portrait"
+    margins: [72, 72, 72, 72]  # 1 inch margins
+    font_family: "Helvetica"
+    header_font_size: 14
+    body_font_size: 10
+    line_spacing: 1.2
+    
+    colors:
+      header: [0.2, 0.2, 0.4]
+      risk_very_high: [0.8, 0.2, 0.2]
+      risk_high: [0.9, 0.4, 0.2]
+      risk_moderate: [0.95, 0.7, 0.2]
+      risk_low: [0.6, 0.8, 0.2]
+      risk_very_low: [0.2, 0.6, 0.2]
+    
+    sections:
+      - "title_page"
+      - "executive_summary"
+      - "evidence_integrity"
+      - "metadata_summary"
+      - "forensic_analysis"
+      - "risk_assessment"
+      - "explanations"
+      - "conclusions"
+      - "appendix"
+    
+    include:
+      cover_page: true
+      table_of_contents: true
+      page_numbers: true
+      watermark: "FORENSIC ANALYSIS - CONFIDENTIAL"
+      disclaimer: true
+      analyst_signature: false
+  
+  # JSON report settings
+  json:
+    indent: 2
+    sort_keys: true
+    ensure_ascii: false
+    include_raw_metadata: false
+    compress_output: false
+    
+  # Content control
+  content:
+    include_metadata_summary: true
+    include_full_metadata: false
+    include_hashes: true
+    include_analysis_details: true
+    include_explanations: true
+    include_recommendations: true
+    include_limitations: true
+
+# ============================================================================
+# INTERFACE CONFIGURATION
+# ============================================================================
+interface:
+  # CLI interface
+  cli:
+    enabled: true
+    prompt: "forensic> "
+    history_file: "./results/logs/cli_history.log"
+    max_history: 1000
+    auto_complete: true
+    syntax_highlighting: true
+    color_output: true
+    
+    commands:
+      analyze: "Perform forensic analysis"
+      explain: "Explain forensic findings"
+      metadata: "Show extracted metadata"
+      compare: "Compare with another image"
+      risk: "Show risk assessment"
+      origin: "Show origin detection"
+      export: "Generate reports"
+      help: "Show help"
+      exit: "Exit session"
+    
+  # Natural language processing
+  nlp:
+    enabled: true
+    model: "en_core_web_sm"
+    confidence_threshold: 0.7
+    max_query_length: 500
+    
+  # Web interface (future feature)
+  web:
+    enabled: false
+    host: "127.0.0.1"
+    port: 8080
+    debug: false
+    auth_required: true
+
+# ============================================================================
+# LOGGING CONFIGURATION
+# ============================================================================
+logging:
+  # Log levels
+  console_level: "INFO"
+  file_level: "DEBUG"
+  audit_level: "INFO"
+  
+  # Log files
+  console_log: true
+  file_log: true
+  audit_log: true
+  
+  file_paths:
+    main: "./results/logs/forensic_analysis.log"
+    audit: "./results/logs/audit_trail.log"
+    errors: "./results/logs/error.log"
+    debug: "./results/logs/debug.log"
+  
+  # Log rotation
+  rotation:
+    max_size_mb: 10
+    backup_count: 5
+    compress_backups: true
+    
+  # Log format
+  format: "%(asctime)s | %(levelname)-8s | %(name)-20s | %(message)s"
+  date_format: "%Y-%m-%d %H:%M:%S"
+  
+  # Forensic logging requirements
+  forensic:
+    log_hashes: true
+    log_timestamps: true
+    log_user_actions: true
+    log_system_changes: true
+    log_evidence_access: true
+
+# ============================================================================
+# VALIDATION AND TESTING CONFIGURATION
+# ============================================================================
+validation:
+  # Validation settings
+  enabled: true
+  run_on_startup: false
+  threshold_accuracy: 0.85
+  
+  # Test datasets
+  datasets:
+    ground_truth: "./datasets/ground_truth"
+    social_media: "./datasets/social_media"
+    manipulated: "./datasets/manipulated"
+    original: "./datasets/original"
+  
+  # Test parameters
+  parameters:
+    max_test_files: 50
+    random_seed: 42
+    cross_validation_folds: 5
+    
+  # Performance metrics
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "confusion_matrix"
+    
+  # Reporting
+  report_results: true
+  save_predictions: true
+  generate_plots: true
+
+# ============================================================================
+# PERFORMANCE CONFIGURATION
+# ============================================================================
+performance:
+  # Caching
+  use_cache: true
+  cache_size_mb: 100
+  cache_ttl_seconds: 3600
+  cache_dir: "./forensic_workspace/cache"
+  
+  # Parallel processing
+  max_workers: 4
+  chunk_size: 10
+  timeout_seconds: 300
+  
+  # Memory management
+  memory_limit_mb: 4096
+  cleanup_interval: 60
+  gc_threshold: 0.7
+  
+  # Optimization
+  lazy_loading: true
+  incremental_processing: true
+  batch_processing: true
+
+# ============================================================================
+# SECURITY CONFIGURATION
+# ============================================================================
+security:
+  # Data protection
+  encrypt_sensitive_data: false
+  encryption_algorithm: "AES-256-GCM"
+  encryption_key_path: "./config/keys/encryption.key"
+  
+  # Access control
+  require_authentication: false
+  session_timeout_minutes: 30
+  max_login_attempts: 3
+  
+  # Data anonymization
+  anonymize_reports: false
+  mask_pii: true
+  redact_sensitive: true
+  
+  # Network security
+  allow_network_access: false
+  validate_ssl_certificates: true
+  proxy_settings: null
+  
+  # Compliance
+  gdpr_compliant: true
+  hipaa_compliant: false
+  pci_compliant: false
+
+# ============================================================================
+# ADVANCED SETTINGS
+# ============================================================================
+advanced:
+  # Experimental features
+  experimental:
+    enable_ai_enhancements: false
+    use_deep_learning: false
+    real_time_analysis: false
+    
+  # Debug features
+  debug:
+    save_intermediate_results: false
+    log_memory_usage: false
+    profile_performance: false
+    
+  # Developer options
+  developer:
+    show_internal_errors: false
+    enable_test_endpoints: false
+    bypass_checks: false
+    
+  # Custom rules
+  custom_rules_path: "./config/custom_rules.json"
+  user_patterns_path: "./config/user_patterns.json"
+  
+  # Plugin system (future)
+  plugins:
+    enabled: false
+    directory: "./plugins"
+    auto_load: false
+
+# ============================================================================
+# LEGAL AND COMPLIANCE NOTICES
+# ============================================================================
+legal:
+  disclaimer: |
+    This forensic analysis system is designed for legitimate forensic,
+    academic, and research purposes only. Users must comply with all
+    applicable laws and regulations regarding digital evidence handling.
+    
+    The analysis results are based on metadata and statistical patterns
+    and should be interpreted by qualified forensic experts. The system
+    does not establish guilt or innocence and should be used as part of
+    a comprehensive forensic investigation.
+  
+  compliance_notice: |
+    This system complies with ISO 27037 standards for digital evidence
+    handling and NIST SP 800-86 guidelines for integrating forensic
+    techniques into incident response.
+    
+    All analyses are performed in a forensically sound manner with
+    read-only access to original evidence, cryptographic verification,
+    and comprehensive audit logging.
+  
+  copyright_notice: |
+    MetaForensicAI v1.0.0
+    Copyright © 2024 MetaForensicAI Research Team
+    Licensed under the MIT License
+    
+    This software includes components from:
+    - ExifTool by Phil Harvey
+    - Python Imaging Library (PIL)
+    - Various open-source Python libraries
+    
+    See LICENSE file for complete terms and conditions.

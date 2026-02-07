@@ -1,0 +1,345 @@
+[build-system]
+requires = [
+    "setuptools>=61.0",
+    "wheel>=0.37.0",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+# Basic Information
+name = "metaforensicai"
+version = "1.0.0"
+description = "AI-Assisted Digital Image Forensics System"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "MetaForensicAI Research Team", email = "contact@metaforensicai.com"}
+]
+maintainers = [
+    {name = "MetaForensicAI Maintainers", email = "maintainers@metaforensicai.com"}
+]
+
+# Keywords
+keywords = [
+    "forensic",
+    "digital-forensics",
+    "image-analysis",
+    "metadata",
+    "exif",
+    "ai",
+    "machine-learning",
+    "computer-vision",
+    "security",
+]
+
+# Classifiers
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Legal Industry",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Security",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+# URLs
+urls = { 
+    "Homepage" = "https://github.com/meteforensicai/MetaForensicAI",
+    "Documentation" = "https://meteforensicai.readthedocs.io/",
+    "Repository" = "https://github.com/meteforensicai/MetaForensicAI",
+    "Bug Tracker" = "https://github.com/meteforensicai/MetaForensicAI/issues",
+    "Changelog" = "https://github.com/meteforensicai/MetaForensicAI/releases",
+}
+
+# Dependencies
+dependencies = [
+    # Core dependencies
+    "exifread>=2.3.2",
+    "Pillow>=10.0.0",
+    "numpy>=1.24.3",
+    "pandas>=2.0.3",
+    "python-magic>=0.4.27",
+    
+    # AI/ML dependencies
+    "scikit-learn>=1.3.0",
+    "joblib>=1.3.1",
+    
+    # Reporting dependencies
+    "reportlab>=4.0.4",
+    "Jinja2>=3.1.2",
+    "pyyaml>=6.0.1",
+    "json5>=0.9.14",
+    
+    # CLI dependencies
+    "rich>=13.5.2",
+    "click>=8.1.7",
+    "prompt-toolkit>=3.0.39",
+    "pygments>=2.15.1",
+    
+    # Utility dependencies
+    "tqdm>=4.65.0",
+    "python-dateutil>=2.8.2",
+    "pytz>=2023.3",
+    "tzlocal>=5.0.1",
+]
+
+# Optional dependencies
+[project.optional-dependencies]
+full = [
+    "opencv-python>=4.8.0.74",
+    "scipy>=1.11.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "networkx>=3.0",
+]
+gpu = [
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+]
+web = [
+    "flask>=2.3.0",
+    "flask-cors>=4.0.0",
+    "waitress>=2.1.2",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.7.0",
+    "flake8>=6.0.0",
+    "mypy>=1.5.0",
+    "pre-commit>=3.3.0",
+]
+docs = [
+    "sphinx>=7.1.0",
+    "sphinx-rtd-theme>=1.3.0",
+    "sphinx-autodoc-typehints>=1.23.0",
+    "myst-parser>=2.0.0",
+]
+
+# Entry points
+[project.scripts]
+metaforensicai = "main:main"
+mfa-analyze = "scripts.batch_analyzer:main"
+mfa-validate = "scripts.validation_runner:main"
+mfa-setup = "scripts.setup_forensic_env:main"
+mfa-cli = "interface.cli_assistant:main"
+
+[project.gui-scripts]
+metaforensicai-gui = "interface.web_interface:main"  # Future feature
+
+# Package discovery
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["metaforensicai*"]
+exclude = ["tests*", "test*"]
+
+# Package data
+[tool.setuptools.package-data]
+"metaforensicai" = [
+    "config/*.yaml",
+    "config/*.json",
+    "config/*.yml",
+    "reporting/pdf_templates/*",
+    "models/*.json",
+    "examples/*.jpg",
+    "examples/*.json",
+]
+
+# Black formatting
+[tool.black]
+line-length = 88
+target-version = ['py38']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  | \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | forensic_workspace
+  | results
+  | evidence
+  | datasets
+)/
+'''
+
+# isort configuration
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 88
+known_first_party = ["metaforensicai"]
+
+# mypy configuration
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "PIL.*",
+    "cv2",
+    "sklearn.*",
+]
+ignore_missing_imports = true
+
+# pytest configuration
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short --strict-markers"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: integration tests",
+    "unit: unit tests",
+    "forensic: forensic-specific tests",
+]
+
+# coverage configuration
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+# Bandit security checker
+[tool.bandit]
+exclude_dirs = ["tests", "test", "examples"]
+skips = ["B101"]  # Skip assert used warning
+
+# Flake8 configuration
+[tool.flake8]
+max-line-length = 88
+extend-ignore = [
+    "E203",  # whitespace before ':'
+    "W503",  # line break before binary operator
+]
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    "forensic_workspace",
+    "results",
+    "evidence",
+    "datasets",
+]
+per-file-ignores = [
+    "__init__.py:F401",  # unused imports in __init__ files
+]
+
+# Sphinx documentation
+[tool.sphinx]
+source_dir = "docs/source"
+build_dir = "docs/build"
+doctree_dir = "docs/doctrees"
+copyright = "2024 MetaForensicAI Research Team"
+author = "MetaForensicAI Research Team"
+version = "1.0.0"
+release = "1.0.0"
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.intersphinx",
+    "sphinx_rtd_theme",
+]
+html_theme = "sphinx_rtd_theme"
+
+# Package metadata for PyPI
+[project.urls]
+"Homepage" = "https://github.com/meteforensicai/MetaForensicAI"
+"Documentation" = "https://meteforensicai.readthedocs.io/"
+"Repository" = "https://github.com/meteforensicai/MetaForensicAI"
+"Bug Tracker" = "https://github.com/meteforensicai/MetaForensicAI/issues"
+"Changelog" = "https://github.com/meteforensicai/MetaForensicAI/releases"
+
+# Academic metadata
+[tool.metaforensicai.academic]
+doi = "10.5281/zenodo.meteforensicai-v1"
+citation = """
+@software{MetaForensicAI2024,
+  author = {MetaForensicAI Research Team},
+  title = {MetaForensicAI: AI-Assisted Digital Image Forensics System},
+  year = {2024},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\\url{https://github.com/meteforensicai/MetaForensicAI}},
+  version = {1.0.0},
+  doi = {10.5281/zenodo.meteforensicai-v1}
+}
+"""
+
+# Forensic compliance standards
+[tool.metaforensicai.compliance]
+standards = [
+    "ISO/IEC 27037:2012",
+    "ISO/IEC 27041:2015",
+    "NIST SP 800-86",
+    "ACPO Principles",
+    "SWGDE Best Practices",
+]
+
+# System requirements
+[tool.metaforensicai.requirements]
+minimum_python = "3.8"
+recommended_python = "3.10"
+external_tools = [
+    {name = "exiftool", required = true, purpose = "Full metadata extraction"},
+    {name = "git", required = false, purpose = "Version control"},
+]
+memory = "4 GB RAM minimum"
+disk = "2 GB free space minimum"
+
+# Development environment
+[tool.metaforensicai.development]
+pre_commit_hooks = [
+    "black",
+    "flake8",
+    "mypy",
+    "isort",
+]
+test_framework = "pytest"
+ci = "GitHub Actions"
+code_format = "black"
+linting = "flake8"
+type_checking = "mypy"

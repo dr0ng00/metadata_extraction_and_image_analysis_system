@@ -1,0 +1,7 @@
+# To keep empty directories in git, create .gitkeep file
+touch datasets/ground_truth/original_camera/.gitkeep
+touch datasets/ground_truth/social_media/.gitkeep
+touch datasets/ground_truth/edited_images/.gitkeep
+touch datasets/ground_truth/manipulated/.gitkeep
+touch results/reports/.gitkeep
+touch results/logs/.gitkeep
