@@ -6,6 +6,7 @@ MetaForensicAI Setup Configuration
 from setuptools import setup, find_packages
 import os
 from pathlib import Path
+from typing import Dict
 
 # Read README for long description
 readme_path = Path(__file__).parent / "README.md"
@@ -26,9 +27,22 @@ if requirements_path.exists():
         ]
 
 # Version from package
-version = {}
+version = {"__name__": "__main__", "__builtins__": __builtins__}
 with open(Path(__file__).parent / "src" / "__init__.py", "r") as f:
-    exec(f.read(), version)
+    try:
+        exec(f.read(), version)
+    except (ImportError, ModuleNotFoundError):
+        # If imports fail, just use default version
+        version["__version__"] = "1.0.0"
+
+setup_options: Dict[str, Dict[str, str]] = {
+    "bdist_wheel": {
+        "universal": "0",  # Not universal, Python 3 only
+    },
+    "build": {
+        "build_base": "build",
+    },
+}
 
 setup(
     # Basic Information
@@ -192,14 +206,7 @@ setup(
     ],
     
     # Options
-    options={
-        "bdist_wheel": {
-            "universal": False,  # Not universal, Python 3 only
-        },
-        "build": {
-            "build_base": "build",
-        },
-    },
+    options=setup_options,
     
     # Zip Safe
     zip_safe=False,  # Not zip safe due to config files

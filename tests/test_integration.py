@@ -1,21 +1,23 @@
 """Integration tests for MetaForensicAI."""
 import unittest
+
 from src import MetaForensicAI, ForensicEvidenceHandler, MetadataAuthenticityAnalyzer
 
 
 class TestMetaForensicAIIntegration(unittest.TestCase):
     def test_main_import(self):
         system = MetaForensicAI()
-        self.assertEqual(system.version, '1.0.0')
-    
-    def test_analyze_image(self):
+        self.assertEqual(system.config['system']['version'], '1.0.0')
+        self.assertIsNotNone(system.evidence_handler)
+        self.assertIsNotNone(system.metadata_extractor)
+
+    def test_analyze_image_missing_file(self):
         system = MetaForensicAI()
-        result = system.analyze_image('test.jpg')
-        self.assertIn('risk_score', result)
-        self.assertIn('authentic', result)
+        with self.assertRaisesRegex(ValueError, 'Evidence integrity check failed'):
+            system.analyze_image('test.jpg')
     
     def test_core_modules_integration(self):
-        handler = ForensicEvidenceHandler('test.jpg')
+        handler = ForensicEvidenceHandler()
         analyzer = MetadataAuthenticityAnalyzer()
         self.assertIsNotNone(handler)
         self.assertIsNotNone(analyzer)

@@ -1,0 +1,14 @@
+ExifTool Version Number          : 13.00 (Simulated)
+File Name                        : ai_generated_evidence.jpg
+Directory                        : C:\metadata_extraction_and_image_analysis_system
+File Size                        : 192.1 KiB
+File Modification Date/Time      : 2026:02:08 23:00:56
+File Access Date/Time            : 2026:02:08 23:01:33
+File Inode Change Date/Time      : 2026:02:08 23:00:56
+File Permissions                 : -rw-rw-rw-
+File Type                        : JPEG
+File Type Extension              : jpg
+Mime Type                        : image/jpeg
+Absolute Path                    : C:\metadata_extraction_and_image_analysis_system\ai_generated_evidence.jpg
+File Size (Bytes)                : 196707
+Error                            : cannot identify image file 'ai_generated_evidence.jpg'

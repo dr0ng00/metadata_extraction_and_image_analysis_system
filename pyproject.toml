@@ -20,6 +20,9 @@ maintainers = [
     {name = "MetaForensicAI Maintainers", email = "maintainers@metaforensicai.com"}
 ]
 
+# URLs
+urls = { "Homepage" = "https://github.com/meteforensicai/MetaForensicAI", "Documentation" = "https://meteforensicai.readthedocs.io/", "Repository" = "https://github.com/meteforensicai/MetaForensicAI", "Bug Tracker" = "https://github.com/meteforensicai/MetaForensicAI/issues", "Changelog" = "https://github.com/meteforensicai/MetaForensicAI/releases" }
+
 # Keywords
 keywords = [
     "forensic",
@@ -36,7 +39,7 @@ keywords = [
 # Classifiers
 classifiers = [
     "Development Status :: 4 - Beta",
-    "Intended Audience :: Legal Industry",
+    "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -46,23 +49,14 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Topic :: Security",
-    "Topic :: Multimedia :: Graphics",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
-
-# URLs
-urls = { 
-    "Homepage" = "https://github.com/meteforensicai/MetaForensicAI",
-    "Documentation" = "https://meteforensicai.readthedocs.io/",
-    "Repository" = "https://github.com/meteforensicai/MetaForensicAI",
-    "Bug Tracker" = "https://github.com/meteforensicai/MetaForensicAI/issues",
-    "Changelog" = "https://github.com/meteforensicai/MetaForensicAI/releases",
-}
 
 # Dependencies
 dependencies = [
     # Core dependencies
     "exifread>=2.3.2",
+    "piexif>=1.1.3",
     "Pillow>=10.0.0",
     "numpy>=1.24.3",
     "pandas>=2.0.3",
@@ -126,24 +120,17 @@ docs = [
 
 # Entry points
 [project.scripts]
-metaforensicai = "main:main"
-mfa-analyze = "scripts.batch_analyzer:main"
-mfa-validate = "scripts.validation_runner:main"
-mfa-setup = "scripts.setup_forensic_env:main"
-mfa-cli = "interface.cli_assistant:main"
-
-[project.gui-scripts]
-metaforensicai-gui = "interface.web_interface:main"  # Future feature
+metaforensicai = "src.main:main"
 
 # Package discovery
 [tool.setuptools.packages.find]
-where = ["src"]
-include = ["metaforensicai*"]
+where = ["."]
+include = ["src", "src.*"]
 exclude = ["tests*", "test*"]
 
 # Package data
 [tool.setuptools.package-data]
-"metaforensicai" = [
+"src" = [
     "config/*.yaml",
     "config/*.json",
     "config/*.yml",
@@ -268,7 +255,7 @@ per-file-ignores = [
 ]
 
 # Sphinx documentation
-[tool.sphinx]
+[tool.sphinx-pyproject]
 source_dir = "docs/source"
 build_dir = "docs/build"
 doctree_dir = "docs/doctrees"
@@ -284,14 +271,6 @@ extensions = [
     "sphinx_rtd_theme",
 ]
 html_theme = "sphinx_rtd_theme"
-
-# Package metadata for PyPI
-[project.urls]
-"Homepage" = "https://github.com/meteforensicai/MetaForensicAI"
-"Documentation" = "https://meteforensicai.readthedocs.io/"
-"Repository" = "https://github.com/meteforensicai/MetaForensicAI"
-"Bug Tracker" = "https://github.com/meteforensicai/MetaForensicAI/issues"
-"Changelog" = "https://github.com/meteforensicai/MetaForensicAI/releases"
 
 # Academic metadata
 [tool.metaforensicai.academic]

@@ -1,0 +1,95 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Forensic Analysis Report</title>
+            <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; color: #333; line-height: 1.6; }
+                h1 { color: #2c3e50; border-bottom: 2px solid #34495e; padding-bottom: 10px; }
+                h2 { color: #e67e22; margin-top: 30px; }
+                .summary { background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 5px solid #3498db; }
+                .critical { color: #c0392b; font-weight: bold; }
+                .finding { padding: 10px; margin: 5px 0; border-bottom: 1px solid #eee; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { padding: 12px; text-align: left; border: 1px solid #ddd; }
+                th { background-color: #2c3e50; color: white; }
+                tr:nth-child(even) { background-color: #f2f2f2; }
+            </style>
+        </head>
+        <body>
+            <h1>Forensic Analysis Report</h1>
+            <div class="summary">
+                <p><strong>Case Evidence:</strong> venv/Lib/site-packages/sklearn/datasets/images/china.jpg</p>
+                <p><strong>Forensic Interpretation:</strong> <span class="critical">SYNTHETIC CONTENT</span></p>
+                <p><strong>Risk Score:</strong> 41.0/100 (MEDIUM)</p>
+                <p><strong>Analysis Timestamp:</strong> 2026-02-08 20:45:21</p>
+            </div>
+
+            <h2>Unified Forensic Conclusion</h2>
+            <p>Forensic Risk: MEDIUM (41.0/100). Primary interpretation: SYNTHETIC_CONTENT.</p>
+
+            <h2>Forensic Justifications (XAI)</h2>
+            
+                <div class="finding" style="border: 2px solid #34495e; padding: 20px; margin-bottom: 20px; border-radius: 8px;">
+                    <h3 style="margin-top: 0; color: #c0392b;">
+                        [CRITICAL] Synthetic Content (AI-Generated) Identification
+                    </h3>
+                    <p><strong>Observation:</strong> The image lacks the structural and metadata signatures typical of a physical optical sensor.</p>
+                    <p><strong>Metadata Triggers:</strong> <code>{"Metadata Density": "Low", "Camera Profile": "Missing"}</code></p>
+                    <p><strong>Forensic Logic:</strong> AI generators (DALL-E, Midjourney) typically produce 'sterile' metadata. The absence of expected sensor-specific tags (ISO, Aperture, Serial Number) is statistically significant.</p>
+                    <p><strong>Expert Significance:</strong> Identifies non-photographic evidence that may be used for disinformation or fraud.</p>
+                    <div style="background: #ecf0f1; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                        <strong>Potential Interpretations:</strong>
+                        <ul style="margin: 5px 0;">
+                            <li><em>Legitimate:</em> N/A (Synthetic images are by definition not camera-originals).</li>
+                            <li><em>Malicious:</em> Generation of non-existent events or personas.</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="finding" style="border: 2px solid #34495e; padding: 20px; margin-bottom: 20px; border-radius: 8px;">
+                    <h3 style="margin-top: 0; color: #c0392b;">
+                        [HIGH] Unified Forensic Conclusion
+                    </h3>
+                    <p><strong>Observation:</strong> Multi-source correlation interprets this evidence as SYNTHETIC CONTENT.</p>
+                    <p><strong>Metadata Triggers:</strong> <code>{"Interpretation": "SYNTHETIC_CONTENT"}</code></p>
+                    <p><strong>Forensic Logic:</strong> Aggregated findings from ML classification, rule-based logic, and statistical anomalies converge on this result.</p>
+                    <p><strong>Expert Significance:</strong> Provides a single, weighted determination for the trier of fact.</p>
+                    <div style="background: #ecf0f1; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                        <strong>Potential Interpretations:</strong>
+                        <ul style="margin: 5px 0;">
+                            <li><em>Legitimate:</em> General consistency across all forensic modules.</li>
+                            <li><em>Malicious:</em> Converged evidence of intentional manipulation or fabrication.</li>
+                        </ul>
+                    </div>
+                </div>
+            
+
+            <h2>File System Metadata</h2>
+            <table>
+                <tr><th>Attribute</th><th>Value</th></tr>
+                <tr><td>File Name</td><td>china.jpg</td></tr><tr><td>Directory</td><td>C:\metadata_extraction_and_image_analysis_system\venv\Lib\site-packages\sklearn\datasets\images</td></tr><tr><td>File Size</td><td>192.0 KiB</td></tr><tr><td>File Modification Date/Time</td><td>2026:02:07 17:32:06</td></tr><tr><td>File Access Date/Time</td><td>2026:02:08 20:42:34</td></tr><tr><td>File Inode Change Date/Time</td><td>2026:02:07 17:32:06</td></tr><tr><td>File Permissions</td><td>-rw-rw-rw-</td></tr><tr><td>File Type</td><td>JPEG</td></tr><tr><td>File Type Extension</td><td>jpg</td></tr><tr><td>MIME Type</td><td>image/jpeg</td></tr>
+            </table>
+
+            <h2>EXIF Metadata</h2>
+            <div style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; margin-top: 10px;">
+                <table>
+                    <tr><th>Tag</th><th>Value</th></tr>
+                    
+                </table>
+            </div>
+
+            <h2>ICC Profile</h2><table><tr><th>Attribute</th><th>Value</th></tr><tr><td>Profile Size</td><td>3144</td></tr><tr><td>Profile Presence</td><td>Detected</td></tr></table>
+
+            <h2>Composite Forensic Tags</h2>
+            <table>
+                <tr><th>Tag</th><th>Value</th></tr>
+                <tr><td>Image Size</td><td>640x427</td></tr><tr><td>Megapixels</td><td>0.3</td></tr>
+            </table>
+
+            <footer style="margin-top: 50px; font-size: 0.8em; color: #7f8c8d;">
+                Generated by MetaForensicAI Enterprise v1.0.0 | Forensic Integrity Guaranteed
+            </footer>
+        </body>
+        </html>
+        

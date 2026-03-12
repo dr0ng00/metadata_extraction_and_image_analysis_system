@@ -17,15 +17,20 @@ from .core import (
     ForensicEvidenceHandler,
     EnhancedMetadataExtractor,
     MetadataAuthenticityAnalyzer,
-    OriginDetector
+    OriginDetector,
+    ForensicDomainManager
 )
 
 # Analysis modules
 from .analysis import (
     ContextualAnalyzer,
     EvidenceRiskScorer,
-    TimestampAnalyzer
+    TimestampAnalyzer,
+    EvidenceCorrelator
 )
+
+# Explanation modules
+from .explanation import ConfidenceExplanationEngine
 
 # Interface modules
 from .interface import (
@@ -51,9 +56,13 @@ __all__ = [
     'OriginDetector',
     'ContextualAnalyzer',
     'EvidenceRiskScorer',
+    'TimestampAnalyzer',
+    'ForensicDomainManager',
+    'EvidenceCorrelator',
     'ForensicCLIAssistant',
     'ForensicReportGenerator',
-    'ForensicHasher'
+    'ForensicHasher',
+    'ConfidenceExplanationEngine'
 ]
 
 # Package metadata
@@ -90,6 +99,8 @@ def get_system_info():
             'origin_detection': True,
             'risk_scoring': True,
             'explanatory_ai': True,
+            'evidence_correlation': True,
+            'domain_expertise': True,
             'interactive_cli': True,
             'forensic_reporting': True
         },

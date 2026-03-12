@@ -1,0 +1,220 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Forensic Analysis Report</title>
+            <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; color: #333; line-height: 1.6; background-color: #fcfcfc; }
+                h1 { color: #2c3e50; border-bottom: 2px solid #34495e; padding-bottom: 10px; }
+                h2 { color: #e67e22; margin-top: 30px; border-left: 5px solid #e67e22; padding-left: 15px; }
+                .summary { background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 5px solid #3498db; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+                .critical { color: #c0392b; font-weight: bold; }
+                .finding { padding: 10px; margin: 5px 0; border-bottom: 1px solid #eee; }
+                
+                /* Metadata Box Styling */
+                .metadata-box { 
+                    background: white; 
+                    border: 1px solid #d1d5da; 
+                    border-radius: 8px; 
+                    padding: 20px; 
+                    margin: 20px 0; 
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+                    max-height: 500px; 
+                    overflow-y: auto; 
+                }
+                
+                .raw-box {
+                    background: #1e1e1e;
+                    color: #d4d4d4;
+                    padding: 20px;
+                    border-radius: 8px;
+                    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+                    font-size: 0.9em;
+                    white-space: pre-wrap;
+                    overflow-x: auto;
+                    border-left: 5px solid #007acc;
+                }
+
+                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                th, td { padding: 12px; text-align: left; border: 1px solid #eee; }
+                th { background-color: #f8f9fa; color: #2c3e50; font-weight: 600; }
+                tr:nth-child(even) { background-color: #fafafa; }
+                tr:hover { background-color: #f1f1f1; }
+            </style>
+        </head>
+        <body>
+            <h1>Forensic Analysis Report</h1>
+            <div class="summary">
+                <p><strong>Case Evidence:</strong> c:\metadata_extraction_and_image_analysis_system\venv\Lib\site-packages\sklearn\datasets\images\china.jpg</p>
+                <p><strong>Forensic Interpretation:</strong> <span class="critical">SYNTHETIC CONTENT</span></p>
+                <p><strong>Risk Score:</strong> 41.0/100 (MEDIUM)</p>
+                <p><strong>Analysis Timestamp:</strong> 2026-02-08 22:45:18</p>
+            </div>
+
+            <h2>Unified Forensic Conclusion</h2>
+            <div class="metadata-box" style="background: #fffdf9; border-left: 5px solid #e67e22;">
+                <p>Forensic Risk: MEDIUM (41.0/100). Primary interpretation: SYNTHETIC_CONTENT.</p>
+            </div>
+
+            <h2>Forensic Justifications (XAI)</h2>
+            
+                <div class="finding" style="border: 1px solid #34495e; padding: 20px; margin-bottom: 20px; border-radius: 8px; background: white;">
+                    <h3 style="margin-top: 0; color: #c0392b;">
+                        [CRITICAL] Synthetic Content (AI-Generated) Identification
+                    </h3>
+                    <p><strong>Observation:</strong> The image lacks the structural and metadata signatures typical of a physical optical sensor.</p>
+                    <p><strong>Metadata Triggers:</strong> <code>{"Metadata Density": "Low", "Camera Profile": "Missing"}</code></p>
+                    <p><strong>Forensic Logic:</strong> AI generators (DALL-E, Midjourney) typically produce 'sterile' metadata. The absence of expected sensor-specific tags (ISO, Aperture, Serial Number) is statistically significant.</p>
+                    <p><strong>Expert Significance:</strong> Identifies non-photographic evidence that may be used for disinformation or fraud.</p>
+                    <div style="background: #ecf0f1; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                        <strong>Potential Interpretations:</strong>
+                        <ul style="margin: 5px 0;">
+                            <li><em>Legitimate:</em> N/A (Synthetic images are by definition not camera-originals).</li>
+                            <li><em>Malicious:</em> Generation of non-existent events or personas.</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="finding" style="border: 1px solid #34495e; padding: 20px; margin-bottom: 20px; border-radius: 8px; background: white;">
+                    <h3 style="margin-top: 0; color: #d35400;">
+                        [MEDIUM] Error Level Analysis (ELA) regional variance
+                    </h3>
+                    <p><strong>Observation:</strong> Pixel compression error levels vary significantly across regions (Max Diff: 57).</p>
+                    <p><strong>Metadata Triggers:</strong> <code>{"ELA Intensity": "HIGH", "Max Difference": 57}</code></p>
+                    <p><strong>Forensic Logic:</strong> In a uniform JPEG capture, compression artifacts should be homogeneous. Disproportionate error levels in specific regions suggest local pixel modification (e.g., cloning or airbrushing).</p>
+                    <p><strong>Expert Significance:</strong> Visual proof of regional tampering that may not be recorded in the metadata headers.</p>
+                    <div style="background: #ecf0f1; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                        <strong>Potential Interpretations:</strong>
+                        <ul style="margin: 5px 0;">
+                            <li><em>Legitimate:</em> Intense high-frequency detail vs. smooth gradients in the original scene.</li>
+                            <li><em>Malicious:</em> Post-capture regional editing to remove or add objects (cloning).</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="finding" style="border: 1px solid #34495e; padding: 20px; margin-bottom: 20px; border-radius: 8px; background: white;">
+                    <h3 style="margin-top: 0; color: #d35400;">
+                        [HIGH] Non-Standard Quantization Profile
+                    </h3>
+                    <p><strong>Observation:</strong> The image uses compression matrices typically associated with editing software rather than camera firmware.</p>
+                    <p><strong>Metadata Triggers:</strong> <code>{"Q-Table Match": "Software_Modification"}</code></p>
+                    <p><strong>Forensic Logic:</strong> Every camera manufacturer uses specific quantization tables. A match with software-grade tables proves the image has been re-saved by a processing suite.</p>
+                    <p><strong>Expert Significance:</strong> Solidifies the 'Post-Capture Modification' flag with independent signal-layer evidence.</p>
+                    <div style="background: #ecf0f1; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                        <strong>Potential Interpretations:</strong>
+                        <ul style="margin: 5px 0;">
+                            <li><em>Legitimate:</em> Intentional re-save for web optimization or distribution.</li>
+                            <li><em>Malicious:</em> Final save after significant structural tampering.</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="finding" style="border: 1px solid #34495e; padding: 20px; margin-bottom: 20px; border-radius: 8px; background: white;">
+                    <h3 style="margin-top: 0; color: #2c3e50;">
+                        [HIGH] Historical Evidentiary Correlation
+                    </h3>
+                    <p><strong>Observation:</strong> Identified links to 2 evidence items across 2 historical cases.</p>
+                    <p><strong>Metadata Triggers:</strong> <code>{"Match Count": 2, "Primary Link": "SIGNAL_MATCH"}</code></p>
+                    <p><strong>Forensic Logic:</strong> Evidentiary fingerprints (Hardware Signatures/Serial Numbers) matched entries in the forensic intelligence database.</p>
+                    <p><strong>Expert Significance:</strong> Allows investigators to link disparate investigations back to a common source or device.</p>
+                    <div style="background: #ecf0f1; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                        <strong>Potential Interpretations:</strong>
+                        <ul style="margin: 5px 0;">
+                            <li><em>Legitimate:</em> Multiple photographs taken by the same legitimate owner/source.</li>
+                            <li><em>Malicious:</em> Discovery of a common 're-compression' engine or 'troll farm' infrastructure.</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="finding" style="border: 1px solid #34495e; padding: 20px; margin-bottom: 20px; border-radius: 8px; background: white;">
+                    <h3 style="margin-top: 0; color: #c0392b;">
+                        [HIGH] Unified Forensic Conclusion
+                    </h3>
+                    <p><strong>Observation:</strong> Multi-source correlation interprets this evidence as SYNTHETIC CONTENT.</p>
+                    <p><strong>Metadata Triggers:</strong> <code>{"Interpretation": "SYNTHETIC_CONTENT"}</code></p>
+                    <p><strong>Forensic Logic:</strong> Aggregated findings from ML classification, rule-based logic, and statistical anomalies converge on this result.</p>
+                    <p><strong>Expert Significance:</strong> Provides a single, weighted determination for the trier of fact.</p>
+                    <div style="background: #ecf0f1; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                        <strong>Potential Interpretations:</strong>
+                        <ul style="margin: 5px 0;">
+                            <li><em>Legitimate:</em> General consistency across all forensic modules.</li>
+                            <li><em>Malicious:</em> Converged evidence of intentional manipulation or fabrication.</li>
+                        </ul>
+                    </div>
+                </div>
+            
+
+            <h2>Investigative Raw Metadata (ExifTool-Style)</h2>
+            <div class="raw-box">
+ExifTool Version Number          : 13.00 (Simulated)
+File Name                        : china.jpg
+Directory                        : c:\metadata_extraction_and_image_analysis_system\venv\Lib\site-packages\sklearn\datasets\images
+File Size                        : 192.0 KiB
+File Modification Date/Time      : 2026:02:07 17:32:06
+File Access Date/Time            : 2026:02:08 22:43:41
+File Inode Change Date/Time      : 2026:02:07 17:32:06
+File Permissions                 : -rw-rw-rw-
+File Type                        : JPEG
+File Type Extension              : jpg
+Mime Type                        : image/jpeg
+Absolute Path                    : c:\metadata_extraction_and_image_analysis_system\venv\Lib\site-packages\sklearn\datasets\images\china.jpg
+File Size (Bytes)                : 196653
+Mode                             : RGB
+Image Size                       : 640x427
+Image Width                      : 640
+Image Height                     : 427
+Jfif                             : 257
+Jfif Version                     : (1, 1)
+Dpi                              : (72, 72)
+Jfif Unit                        : 1
+Jfif Density                     : (72, 72)
+ICC Profile Size                 : 3144
+Profile Presence                 : Detected
+Thumbnails                       : DETECTED (3 Application Segments)
+Megapixels                       : 0.3
+Dimensions                       : 640x427
+Date/Time Original               : None
+Camera Make                      : None
+Camera Model                     : None
+Software                         : None
+Label                            : Generic
+Forensics                        : Quantization table analysis, ELA compatibility
+Notes                            : Generic hardware analysis
+Is Raw                           : False
+Standards Present                : 
+Has Geotag                       : False
+Modules                          : 
+            </div>
+
+            <h2>EXIF Metadata Box</h2>
+            <div class="metadata-box">
+                <table>
+                    <tr><th>Tag</th><th>Value</th></tr>
+                    <tr><td colspan='2'>No EXIF metadata detected.</td></tr>
+                </table>
+            </div>
+
+            <h2>File System Metadata</h2>
+            <div class="metadata-box">
+                <table>
+                    <tr><th>Attribute</th><th>Value</th></tr>
+                    <tr><td>File Name</td><td>china.jpg</td></tr><tr><td>Directory</td><td>c:\metadata_extraction_and_image_analysis_system\venv\Lib\site-packages\sklearn\datasets\images</td></tr><tr><td>File Size</td><td>192.0 KiB</td></tr><tr><td>File Modification Date/Time</td><td>2026:02:07 17:32:06</td></tr><tr><td>File Access Date/Time</td><td>2026:02:08 22:43:41</td></tr><tr><td>File Inode Change Date/Time</td><td>2026:02:07 17:32:06</td></tr><tr><td>File Permissions</td><td>-rw-rw-rw-</td></tr><tr><td>File Type</td><td>JPEG</td></tr><tr><td>File Type Extension</td><td>jpg</td></tr><tr><td>MIME Type</td><td>image/jpeg</td></tr>
+                </table>
+            </div>
+
+            <h2>ICC Profile</h2><div class="metadata-box"><table><tr><th>Attribute</th><th>Value</th></tr><tr><td>Profile Size</td><td>3144</td></tr><tr><td>Profile Presence</td><td>Detected</td></tr></table></div>
+
+            <h2>Composite Forensic Tags</h2>
+            <div class="metadata-box">
+                <table>
+                    <tr><th>Tag</th><th>Value</th></tr>
+                    <tr><td>Image Size</td><td>640x427</td></tr><tr><td>Megapixels</td><td>0.3</td></tr>
+                </table>
+            </div>
+
+            <footer style="margin-top: 50px; font-size: 0.8em; color: #7f8c8d;">
+                Generated by MetaForensicAI Enterprise v1.0.0 | Forensic Integrity Guaranteed
+            </footer>
+        </body>
+        </html>
+        

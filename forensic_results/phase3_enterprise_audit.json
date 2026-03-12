@@ -1,0 +1,386 @@
+{
+    "authentic": false,
+    "confidence": 0.8,
+    "flags": [
+        "Missing essential DateTimeOriginal metadata",
+        "No camera hardware signatures found in metadata"
+    ],
+    "risk_score": 20.0,
+    "image_path": "c:\\metadata_extraction_and_image_analysis_system\\venv\\Lib\\site-packages\\sklearn\\datasets\\images\\flower.jpg",
+    "case_info": {
+        "case_id": "CASE_BETA"
+    },
+    "analysis_timestamp": "2026-02-08T21:48:11.195495",
+    "metadata": {
+        "file_info": {
+            "File Name": "flower.jpg",
+            "Directory": "c:\\metadata_extraction_and_image_analysis_system\\venv\\Lib\\site-packages\\sklearn\\datasets\\images",
+            "File Size": "139.6 KiB",
+            "File Modification Date/Time": "2026:02:07 17:32:06",
+            "File Access Date/Time": "2026:02:08 21:47:06",
+            "File Inode Change Date/Time": "2026:02:07 17:32:06",
+            "File Permissions": "-rw-rw-rw-",
+            "File Type": "JPEG",
+            "File Type Extension": "jpg",
+            "MIME Type": "image/jpeg",
+            "absolute_path": "c:\\metadata_extraction_and_image_analysis_system\\venv\\Lib\\site-packages\\sklearn\\datasets\\images\\flower.jpg",
+            "size_bytes": 142987
+        },
+        "image_info": {
+            "format": "JPEG",
+            "mode": "RGB",
+            "size": [
+                640,
+                427
+            ],
+            "width": 640,
+            "height": 427,
+            "info": {
+                "jfif": "257",
+                "jfif_version": "(1, 1)",
+                "dpi": "(72, 72)",
+                "jfif_unit": "1",
+                "jfif_density": "(72, 72)"
+            }
+        },
+        "exif": "ABSENT",
+        "xmp": "ABSENT",
+        "iptc": "DETECTED (Photoshop Block)",
+        "gps": "ABSENT",
+        "icc_profile": {
+            "Profile Size": 3144,
+            "Profile Presence": "Detected"
+        },
+        "makernotes": "ABSENT",
+        "thumbnails": "DETECTED (4 Application Segments)",
+        "composite": {
+            "Image Size": "640x427",
+            "Megapixels": 0.3
+        },
+        "summary": {
+            "dimensions": "640x427",
+            "format": "JPEG",
+            "datetime_original": null,
+            "camera_make": null,
+            "camera_model": null,
+            "software": null
+        },
+        "domains": {
+            "image_format": {
+                "label": "JPEG",
+                "expertise": {
+                    "forensics": "Quantization table analysis, ELA compatibility"
+                }
+            },
+            "manufacturer": {
+                "label": "Generic",
+                "expertise": {
+                    "notes": "Generic hardware analysis"
+                }
+            },
+            "raw_domain": {
+                "is_raw": false
+            },
+            "standards_present": [],
+            "geospatial": {
+                "has_geotag": false,
+                "modules": []
+            }
+        }
+    },
+    "domains": {
+        "image_format": {
+            "label": "JPEG",
+            "expertise": {
+                "forensics": "Quantization table analysis, ELA compatibility"
+            }
+        },
+        "manufacturer": {
+            "label": "Generic",
+            "expertise": {
+                "notes": "Generic hardware analysis"
+            }
+        },
+        "raw_domain": {
+            "is_raw": false
+        },
+        "standards_present": [],
+        "geospatial": {
+            "has_geotag": false,
+            "modules": []
+        }
+    },
+    "origin_detection": {
+        "primary_origin": "ai_generated",
+        "confidence": 0.65,
+        "features": {
+            "has_camera_make": false,
+            "software": "",
+            "metadata_density": 0,
+            "resolution": "640x427",
+            "aspect_ratio": 1.5,
+            "dpi": null,
+            "has_gps": false,
+            "thumbnail_present": false
+        },
+        "details": "Minimal metadata and no camera signature (Synthetic clue)",
+        "is_synthetic": true,
+        "platform_fingerprint": null
+    },
+    "contextual_analysis": {
+        "issues": [],
+        "confidence": 1.0,
+        "risk_score": 0.0,
+        "findings": {
+            "gps_trustworthy": true,
+            "day_night_consistent": true,
+            "metadata_hour": null
+        }
+    },
+    "timestamp_analysis": {
+        "issues": [],
+        "confidence": 1.0,
+        "timestamp_audit": {
+            "original": null,
+            "digitized": null,
+            "is_consistent": true
+        }
+    },
+    "artifact_analysis": {
+        "ela_results": {
+            "max_difference": 69,
+            "scale_factor": 3.7,
+            "ela_intensity": "HIGH",
+            "status": "SUCCESS"
+        },
+        "qtable_audit": {
+            "luma_table": [
+                1,
+                1,
+                1,
+                1,
+                2,
+                3,
+                4,
+                5,
+                1,
+                1,
+                1,
+                2,
+                2,
+                5,
+                5,
+                4,
+                1,
+                1,
+                1,
+                2,
+                3,
+                5,
+                6,
+                4,
+                1,
+                1,
+                2,
+                2,
+                4,
+                7,
+                6,
+                5,
+                1,
+                2,
+                3,
+                4,
+                5,
+                9,
+                8,
+                6,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9,
+                7,
+                4,
+                5,
+                6,
+                7,
+                8,
+                10,
+                10,
+                8,
+                6,
+                7,
+                8,
+                8,
+                9,
+                8,
+                8,
+                8
+            ],
+            "signature_match": "Software_Modification",
+            "status": "SUCCESS"
+        },
+        "advanced_flags": [
+            "HIGH_ELA_VARIANCE: Potential regional manipulation detected.",
+            "FOREIGN_QTABLE: Compression profile matches non-camera software."
+        ]
+    },
+    "correlation": {
+        "unified_interpretation": "SYNTHETIC_CONTENT",
+        "indicators": [
+            "No camera hardware signatures found in metadata",
+            "Missing essential DateTimeOriginal metadata"
+        ],
+        "conflicts": [],
+        "origin_summary": "ML predicted ai_generated with 2 consistency flags found.",
+        "confidence_modifier": 1.0
+    },
+    "risk_assessment": {
+        "risk_score": 41.0,
+        "level": "MEDIUM",
+        "factors": {
+            "authenticity": {
+                "value": 20.0,
+                "weight": 0.25,
+                "influence": 5.0
+            },
+            "origin": {
+                "value": 90,
+                "weight": 0.25,
+                "influence": 22.5
+            },
+            "contextual": {
+                "value": 0.0,
+                "weight": 0.2,
+                "influence": 0.0
+            },
+            "timestamp": {
+                "value": 0.0,
+                "weight": 0.15,
+                "influence": 0.0
+            },
+            "correlation": {
+                "value": 90,
+                "weight": 0.15,
+                "influence": 13.5,
+                "interpretation": "SYNTHETIC_CONTENT"
+            }
+        },
+        "findings_summary": "Forensic Risk: MEDIUM (41.0/100). Primary interpretation: SYNTHETIC_CONTENT.",
+        "unified_interpretation": "SYNTHETIC_CONTENT"
+    },
+    "bayesian_risk": {
+        "predictive_risk_score": 99.1,
+        "risk_level": "CRITICAL",
+        "prior_probability": 0.85,
+        "evidence_cues_used": [
+            "HIGH_ELA_VARIANCE",
+            "FOREIGN_QTABLE"
+        ],
+        "interpretation": "Bayesian model predicts CRITICAL risk based on 2 structural artifacts."
+    },
+    "cross_case_analysis": {
+        "has_cross_links": true,
+        "link_count": 1,
+        "evidentiary_links": [
+            {
+                "linked_case": "CASE_ALPHA",
+                "linked_file": "china.jpg",
+                "relationship": "SIGNAL_MATCH",
+                "shared_signature": "Software_Modification",
+                "confidence": 0.8
+            }
+        ],
+        "summary": "Identified links to 1 evidence items across 1 historical cases."
+    },
+    "explanations": [
+        {
+            "title": "Synthetic Content (AI-Generated) Identification",
+            "observation": "The image lacks the structural and metadata signatures typical of a physical optical sensor.",
+            "triggers": {
+                "Metadata Density": "Low",
+                "Camera Profile": "Missing"
+            },
+            "logic": "AI generators (DALL-E, Midjourney) typically produce 'sterile' metadata. The absence of expected sensor-specific tags (ISO, Aperture, Serial Number) is statistically significant.",
+            "significance": "Identifies non-photographic evidence that may be used for disinformation or fraud.",
+            "causes": {
+                "legitimate": "N/A (Synthetic images are by definition not camera-originals).",
+                "malicious": "Generation of non-existent events or personas."
+            },
+            "confidence": "CRITICAL",
+            "severity": "CRITICAL"
+        },
+        {
+            "title": "Error Level Analysis (ELA) regional variance",
+            "observation": "Pixel compression error levels vary significantly across regions (Max Diff: 69).",
+            "triggers": {
+                "ELA Intensity": "HIGH",
+                "Max Difference": 69
+            },
+            "logic": "In a uniform JPEG capture, compression artifacts should be homogeneous. Disproportionate error levels in specific regions suggest local pixel modification (e.g., cloning or airbrushing).",
+            "significance": "Visual proof of regional tampering that may not be recorded in the metadata headers.",
+            "causes": {
+                "legitimate": "Intense high-frequency detail vs. smooth gradients in the original scene.",
+                "malicious": "Post-capture regional editing to remove or add objects (cloning)."
+            },
+            "confidence": "MEDIUM",
+            "severity": "HIGH"
+        },
+        {
+            "title": "Non-Standard Quantization Profile",
+            "observation": "The image uses compression matrices typically associated with editing software rather than camera firmware.",
+            "triggers": {
+                "Q-Table Match": "Software_Modification"
+            },
+            "logic": "Every camera manufacturer uses specific quantization tables. A match with software-grade tables proves the image has been re-saved by a processing suite.",
+            "significance": "Solidifies the 'Post-Capture Modification' flag with independent signal-layer evidence.",
+            "causes": {
+                "legitimate": "Intentional re-save for web optimization or distribution.",
+                "malicious": "Final save after significant structural tampering."
+            },
+            "confidence": "HIGH",
+            "severity": "HIGH"
+        },
+        {
+            "title": "Historical Evidentiary Correlation",
+            "observation": "Identified links to 1 evidence items across 1 historical cases.",
+            "triggers": {
+                "Match Count": 1,
+                "Primary Link": "SIGNAL_MATCH"
+            },
+            "logic": "Evidentiary fingerprints (Hardware Signatures/Serial Numbers) matched entries in the forensic intelligence database.",
+            "significance": "Allows investigators to link disparate investigations back to a common source or device.",
+            "causes": {
+                "legitimate": "Multiple photographs taken by the same legitimate owner/source.",
+                "malicious": "Discovery of a common 're-compression' engine or 'troll farm' infrastructure."
+            },
+            "confidence": "HIGH",
+            "severity": "MEDIUM"
+        },
+        {
+            "title": "Unified Forensic Conclusion",
+            "observation": "Multi-source correlation interprets this evidence as SYNTHETIC CONTENT.",
+            "triggers": {
+                "Interpretation": "SYNTHETIC_CONTENT"
+            },
+            "logic": "Aggregated findings from ML classification, rule-based logic, and statistical anomalies converge on this result.",
+            "significance": "Provides a single, weighted determination for the trier of fact.",
+            "causes": {
+                "legitimate": "General consistency across all forensic modules.",
+                "malicious": "Converged evidence of intentional manipulation or fabrication."
+            },
+            "confidence": "HIGH",
+            "severity": "CRITICAL"
+        }
+    ],
+    "evidence_integrity": {
+        "path": "c:\\metadata_extraction_and_image_analysis_system\\venv\\Lib\\site-packages\\sklearn\\datasets\\images\\flower.jpg",
+        "file_path": "c:\\metadata_extraction_and_image_analysis_system\\venv\\Lib\\site-packages\\sklearn\\datasets\\images\\flower.jpg",
+        "processed": true,
+        "status": "ready",
+        "verified": true
+    }
+}

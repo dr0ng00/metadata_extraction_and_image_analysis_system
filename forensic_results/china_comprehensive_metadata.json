@@ -1,0 +1,77 @@
+{
+    "file_info": {
+        "File Name": "china.jpg",
+        "Directory": "c:\\metadata_extraction_and_image_analysis_system\\venv\\Lib\\site-packages\\sklearn\\datasets\\images",
+        "File Size": "192.0 KiB",
+        "File Modification Date/Time": "2026:02:07 17:32:06",
+        "File Access Date/Time": "2026:02:08 21:14:49",
+        "File Inode Change Date/Time": "2026:02:07 17:32:06",
+        "File Permissions": "-rw-rw-rw-",
+        "File Type": "JPEG",
+        "File Type Extension": "jpg",
+        "MIME Type": "image/jpeg",
+        "absolute_path": "c:\\metadata_extraction_and_image_analysis_system\\venv\\Lib\\site-packages\\sklearn\\datasets\\images\\china.jpg",
+        "size_bytes": 196653
+    },
+    "image_info": {
+        "format": "JPEG",
+        "mode": "RGB",
+        "size": [
+            640,
+            427
+        ],
+        "width": 640,
+        "height": 427,
+        "info": {
+            "jfif": "257",
+            "jfif_version": "(1, 1)",
+            "dpi": "(72, 72)",
+            "jfif_unit": "1",
+            "jfif_density": "(72, 72)"
+        }
+    },
+    "exif": "ABSENT",
+    "xmp": "ABSENT",
+    "iptc": "ABSENT",
+    "gps": "ABSENT",
+    "icc_profile": {
+        "Profile Size": 3144,
+        "Profile Presence": "Detected"
+    },
+    "makernotes": "ABSENT",
+    "thumbnails": "DETECTED (3 Application Segments)",
+    "composite": {
+        "Image Size": "640x427",
+        "Megapixels": 0.3
+    },
+    "summary": {
+        "dimensions": "640x427",
+        "format": "JPEG",
+        "datetime_original": null,
+        "camera_make": null,
+        "camera_model": null,
+        "software": null
+    },
+    "domains": {
+        "image_format": {
+            "label": "JPEG",
+            "expertise": {
+                "forensics": "Quantization table analysis, ELA compatibility"
+            }
+        },
+        "manufacturer": {
+            "label": "Generic",
+            "expertise": {
+                "notes": "Generic hardware analysis"
+            }
+        },
+        "raw_domain": {
+            "is_raw": false
+        },
+        "standards_present": [],
+        "geospatial": {
+            "has_geotag": false,
+            "modules": []
+        }
+    }
+}

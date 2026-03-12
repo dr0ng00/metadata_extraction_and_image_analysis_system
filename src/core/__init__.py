@@ -9,12 +9,16 @@ from .evidence_handler import ForensicEvidenceHandler
 from .metadata_extractor import EnhancedMetadataExtractor
 from .forensic_analyzer import MetadataAuthenticityAnalyzer
 from .origin_detector import OriginDetector
+from .forensic_domain_manager import ForensicDomainManager
+from .batch_processor import ForensicBatchProcessor
 
 __all__ = [
     'ForensicEvidenceHandler',
     'EnhancedMetadataExtractor',
     'MetadataAuthenticityAnalyzer',
-    'OriginDetector'
+    'OriginDetector',
+    'ForensicDomainManager',
+    'ForensicBatchProcessor'
 ]
 
 # Core forensic constants
