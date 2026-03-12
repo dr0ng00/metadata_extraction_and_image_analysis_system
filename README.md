@@ -1,203 +1,222 @@
-# MetaForensicAI 🕵️‍♂️
-**Comprehensive AI-Assisted Digital Image Forensics System**
+# MetaForensicAI
 
-MetaForensicAI is a state-of-the-art forensic tool designed for deep analysis of digital images. It combines traditional metadata investigation with AI-assisted origin detection and explainable risk scoring to provide a holistic view of image authenticity.
+AI-assisted digital image forensics focused on metadata extraction, provenance analysis, origin classification, explainable risk scoring, and report generation.
 
-## 🛡 13-Point Forensic Pipeline
-The system implements a professional 13-point analysis workflow:
+## Overview
 
-1.  **Evidence Input**: Read-only intake with cryptographic verification.
-2.  **Metadata Extraction**: Deep audit of EXIF, XMP, IPTC, and MakerNotes.
-3.  **Structured JSON**: Normalization of diverse metadata formats.
-4.  **Feature Generation**: Conversion of raw data into forensic feature vectors.
-5.  **ML Classification**: Predictive origin detection (Camera vs. AI vs. Platform).
-6.  **Rule Application**: Hard-logic consistency checks for hardware/firmware.
-7.  **Anomaly Detection**: Statistical deviation analysis of compression/noise.
-8.  **Supporting Systems**: Specialized domain modules (Canon, Nikon, RAW, GPS).
-9.  **Evidence Correlation**: Unified interpretation of multi-source findings.
-10. **Confidence Scoring**: Weighted risk assessment (XAI-integrated).
-11. **Interactive Assistant**: Natural language forensic querying.
-12. **NLP Responses**: Context-aware evidentiary justifications.
-13. **Professional Reporting**: PDF/JSON/HTML multi-format evidence output.
+MetaForensicAI analyzes image evidence using a multi-stage forensic pipeline built around:
 
-## 🚀 Getting Started
+- evidence integrity checks and hashing
+- EXIF/XMP/IPTC and file metadata extraction
+- origin detection for camera, screenshot, social-media redistribution, and synthetic/AI-like signals
+- structural analysis such as compression and artifact inspection
+- contextual and timestamp consistency checks
+- explainable risk scoring and report generation
 
-### Installation
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/yourusername/MetaForensicAI.git
-    cd MetaForensicAI
-    ```
-2.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+The project exposes the same core engine through:
 
-### Usage
-Analyze an image and generate a professional forensic report:
-```bash
-python forensicai.py --image path/to/evidence.jpg --report pdf --output ./reports
+- a CLI entrypoint via [`forensicai.py`](/c:/metadata_extraction_and_image_analysis_system/forensicai.py)
+- the main package in [`src`](/c:/metadata_extraction_and_image_analysis_system/src)
+- a FastAPI backend in [`src/interface/forensic_api.py`](/c:/metadata_extraction_and_image_analysis_system/src/interface/forensic_api.py)
+
+## Features
+
+- forensic-style image intake with integrity metadata
+- metadata extraction with Python fallback and ExifTool support
+- origin and redistribution detection
+- artifact and compression analysis
+- Bayesian and rule-based risk assessment
+- explainability output for analyst review
+- PDF, HTML, JSON, and text report generation
+- batch processing support
+- API integration for uploaded evidence workflows
+
+## Repository Layout
+
+```text
+.
+|-- forensicai.py              # main CLI launcher
+|-- src/                       # application package
+|   |-- analysis/              # scoring, artifact, contextual, and correlation logic
+|   |-- core/                  # extraction, evidence handling, origin detection
+|   |-- explanation/           # explainability layer
+|   |-- interface/             # CLI assistant and FastAPI backend
+|   |-- reporting/             # report generation
+|   `-- utils/                 # support utilities
+|-- config/                    # default config and forensic rules
+|-- scripts/
+|   |-- analysis/              # focused helper scripts
+|   |-- dataset/               # dataset prep/statistics utilities
+|   |-- experiments/           # one-off generators and debugging helpers
+|   `-- verification/          # manual verification scripts
+|-- tests/                     # automated test suite
+|   `-- manual/                # manual checks excluded from default pytest discovery
+`-- results/                   # generated reports and exports
 ```
 
-Interact with the Forensic CLI Assistant:
+## Requirements
+
+- Python 3.8+
+- Windows, Linux, or macOS
+- ExifTool recommended for full metadata extraction
+
+Core Python dependencies are listed in [`requirements.txt`](/c:/metadata_extraction_and_image_analysis_system/requirements.txt).
+
+## Installation
+
+### 1. Clone the repository
+
 ```bash
-python forensicai.py --interactive
+git clone https://github.com/dr0ng00/metadata_extraction_and_image_analysis_system.git
+cd metadata_extraction_and_image_analysis_system
 ```
 
-## 📂 Project Architecture
-- `src/core`: Extraction and authenticity logic.
-- `src/analysis`: Specialized engines for risk, context, and origin.
-- `src/explanation`: XAI engine for human-readable justifications.
-- `src/reporting`: Professional PDF and JSON report generation.
-- `src/interface`: NLP-powered CLI assistant.
+### 2. Create a virtual environment
 
-## 📄 License
-Forensic-grade implementation. All rights reserved.
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
 
----
+On PowerShell, if needed:
 
-# MetaForensic AI Chat Assistant
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
 
-MetaForensic AI provides an interactive forensic analysis interface that allows investigators to query metadata, inspect evidence signals, and evaluate image origin using structured forensic reasoning.
+### 3. Install dependencies
 
----
+```bash
+pip install -r requirements.txt
+```
 
-## Table of Contents
+### 4. ExifTool
 
-* Chat Commands
-* Direct Metadata Queries
-* Forensic Question Examples
-* Response Format
-* Forensic Guardrails
-* Clarification Flow
-* Confidence Interpretation
-* Recommended Investigation Workflow
+The project can fall back to Python-based extraction, but ExifTool is preferred for higher-fidelity metadata access.
 
----
+- On Windows, the project may attempt to prepare ExifTool automatically when native extraction is first needed.
+- If ExifTool is already available in `PATH`, it will be used directly.
 
-## Chat Commands
+## Quick Start
 
-### Core Commands
+Analyze a single image:
 
-`help`
-Display quick forensic query examples.
+```bash
+python forensicai.py --image path/to/evidence.jpg --report all
+```
 
-`help-all`
-Open the full generated forensic query library containing **200,000+ investigation examples**.
+Analyze a directory:
 
-`tags`
-List all available metadata tags detected in the image.
+```bash
+python forensicai.py --batch path/to/folder --report json
+```
 
-`software`
-Show detected editing software indicators.
+Compare multiple images:
 
-`origin`
-Display image origin classification with supporting forensic evidence.
+```bash
+python forensicai.py --compare image1.jpg image2.jpg --compare-type metadata
+```
 
-`timestamps`
-Show all timestamp-related metadata fields.
+Interactive assistant:
 
-`ai-check`
-Analyze potential AI or synthetic image indicators.
+```bash
+python forensicai.py --image path/to/evidence.jpg --interactive
+```
 
-`compression`
-Show recompression signals and compression artifacts.
+Explain mode:
 
----
+```bash
+python forensicai.py --image path/to/evidence.jpg --ai-mode explain --report html
+```
 
-## Direct Metadata Queries
+## CLI Notes
 
-Investigators can request specific metadata fields directly.
+The main CLI supports:
+
+- single-image analysis with `--image`
+- batch analysis with `--batch`
+- comparison mode with `--compare`
+- multiple report formats via `--report`
+- explainability and analyst-assist modes via `--ai-mode`
+
+The main implementation lives in [`src/main.py`](/c:/metadata_extraction_and_image_analysis_system/src/main.py).
+
+## API Usage
+
+Run the API server module directly:
+
+```bash
+python -m src.interface.forensic_api
+```
+
+Default behavior:
+
+- listens on `0.0.0.0:8000`
+- exposes `/`, `/analyze`, `/cases/{case_id}`, and `/health`
+
+Example health check:
+
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+## Verification and Support Scripts
+
+Manual verification scripts are grouped by purpose:
+
+- [`scripts/verification`](/c:/metadata_extraction_and_image_analysis_system/scripts/verification)
+- [`scripts/experiments`](/c:/metadata_extraction_and_image_analysis_system/scripts/experiments)
+- [`scripts/analysis`](/c:/metadata_extraction_and_image_analysis_system/scripts/analysis)
+- [`scripts/dataset`](/c:/metadata_extraction_and_image_analysis_system/scripts/dataset)
 
 Examples:
 
-`show DateTimeOriginal`
-`show Software`
-`show GPSLatitude`
-`show Model`
-`show ImageWidth`
-`show ImageHeight`
+```bash
+python scripts/verification/verify_api.py
+python scripts/verification/verify_phase3.py
+python scripts/experiments/create_gps_test_image.py
+```
 
-If a tag does not exist, MetaForensic AI returns:
+## Testing
 
-Not available
+Run the default automated test suite:
 
----
+```bash
+pytest
+```
 
-## Forensic Question Examples
+Manual checks under [`tests/manual`](/c:/metadata_extraction_and_image_analysis_system/tests/manual) are intentionally excluded from default test discovery.
 
-Investigators can ask natural language questions such as:
+## Output
 
-Was this image edited after capture
-Is there evidence of WhatsApp or Instagram recompression
-Do the timestamps appear internally consistent
-Is this image AI generated or synthetic artwork
-Show all camera-related metadata fields
-Compare DateTimeOriginal vs FileModifyDate
+Generated artifacts typically land under [`results`](/c:/metadata_extraction_and_image_analysis_system/results) and related report folders, depending on the CLI options used.
 
----
+Common output formats:
 
-## Response Format
+- JSON
+- HTML
+- PDF
+- TXT
 
-MetaForensic AI responses follow a structured forensic reporting format.
+## Configuration
 
-Answer
-Reasoning
-Evidence Used
-Confidence
+Primary configuration files:
 
-This ensures results remain **transparent, traceable, and investigation-ready**.
+- [`config/default_config.yaml`](/c:/metadata_extraction_and_image_analysis_system/config/default_config.yaml)
+- [`config/forensic_rules.json`](/c:/metadata_extraction_and_image_analysis_system/config/forensic_rules.json)
 
----
+You can pass a custom config file to the CLI with:
 
-## Forensic Guardrails
+```bash
+python forensicai.py --config path/to/config.yaml --image path/to/evidence.jpg
+```
 
-MetaForensic AI follows strict forensic analysis principles.
+## Development Notes
 
-No evidence fabrication
-Absence of AI indicators does not imply camera origin
-Missing metadata defaults to **Unknown Origin** unless strong non-metadata evidence exists
+- package metadata is defined in [`pyproject.toml`](/c:/metadata_extraction_and_image_analysis_system/pyproject.toml)
+- the project currently contains some in-progress source changes outside this README
+- the top-level launcher remains [`forensicai.py`](/c:/metadata_extraction_and_image_analysis_system/forensicai.py)
 
----
+## License
 
-## Clarification Flow
-
-If a question can belong to multiple forensic domains, MetaForensic AI asks the investigator to clarify.
-
-Example:
-
-Your question could match multiple forensic domains.
-
-1. Structural or recompression analysis
-2. Synthetic or AI detection
-
-Please select the appropriate option.
-
----
-
-## Confidence Interpretation
-
-Confidence scores indicate the strength of supporting forensic signals.
-
-High — Strong evidence from multiple signals
-Moderate — Partial evidence available
-Low — Limited or inconclusive signals
-
----
-
-## Recommended Investigation Workflow
-
-1. Run `tags` to view all metadata fields.
-2. Check `timestamps` and `origin` for initial triage.
-3. Inspect `software` and `compression` for editing indicators.
-4. Run `ai-check` to evaluate synthetic signals.
-5. Perform targeted tag queries such as:
-
-show DateTimeOriginal
-show Software
-compare DateTimeOriginal vs FileModifyDate
-
-### Prompt Reference
-
-For a full strict court-style assistant policy, see:
-`METAFORENSIC_AI_SYSTEM_PROMPT.md`
+This repository includes an MIT [`LICENSE`](/c:/metadata_extraction_and_image_analysis_system/LICENSE) file.

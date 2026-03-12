@@ -35,7 +35,6 @@ from .analysis.evidence_correlator import EvidenceCorrelator
 from .analysis.artifact_analyzer import ArtifactAnalyzer
 from .analysis.risk_scorer import EvidenceRiskScorer
 from .analysis.bayesian_scorer import BayesianScorer
-from .analysis.cross_case_correlator import CrossCaseCorrelator
 
 # Utility Modules
 from .utils.logging_handler import ForensicLogger, ChainOfCustodyLogger
@@ -76,7 +75,6 @@ class MetaForensicAI:
         self.evidence_correlator = EvidenceCorrelator()
         self.artifact_analyzer = ArtifactAnalyzer()
         self.bayesian_scorer = BayesianScorer()
-        self.cross_case_correlator = CrossCaseCorrelator()
         self.risk_scorer = EvidenceRiskScorer()
         
         # Initialize explanation and reporting
@@ -191,6 +189,19 @@ class MetaForensicAI:
         features = refined.get('features', {}) or {}
 
         if label in {'synthetic_ai_generated', 'ai_generated'}:
+            return refined
+
+        if label == 'screenshot_capture':
+            refined['confidence'] = max(refined.get('confidence', 0.0), 0.88)
+            refined['details'] = "Indicators are consistent with an operating-system or application screenshot."
+            return refined
+        if label == 'social_media':
+            refined['confidence'] = max(refined.get('confidence', 0.0), 0.86)
+            likely_platform = features.get('raw_signals', {}).get('social_media_signals', {}).get('likely_platform')
+            if likely_platform:
+                refined['details'] = f"Indicators are consistent with social-media or messaging-platform redistribution, likely via {likely_platform}."
+            else:
+                refined['details'] = "Indicators are consistent with social-media or messaging-platform redistribution."
             return refined
 
         flags = auth_results.get('flags', []) if isinstance(auth_results, dict) else []
@@ -350,6 +361,10 @@ class MetaForensicAI:
             unified_label = 'SYNTHETIC'
         elif origin_label == 'camera_post_processed' or (strong_camera_origin and not ts_issues and not ctx_issues and reencode_probability >= 60 and manipulation_likelihood < 60):
             unified_label = 'AUTHENTIC_WITH_POST_PROCESSING'
+        elif origin_label == 'social_media':
+            unified_label = 'SOCIAL_MEDIA_REDISTRIBUTED'
+        elif origin_label == 'screenshot_capture':
+            unified_label = 'SCREENSHOT'
         elif origin_label in {'software_reencoded', 'software_generated'} or (reencode_probability >= 70 and not ts_issues and not ctx_issues and not has_software_flag):
             unified_label = 'REENCODED'
         elif manipulation_likelihood >= 75 and (has_software_flag and (ts_issues or ctx_issues)):
@@ -394,12 +409,20 @@ class MetaForensicAI:
             simple_verdict = "Likely original/authentic"
         elif unified_label == 'SYNTHETIC':
             simple_verdict = "Likely AI/synthetic image"
+        elif unified_label == 'SOCIAL_MEDIA_REDISTRIBUTED':
+            simple_verdict = "Likely downloaded from social media or messaging platform"
         elif unified_label == 'INCONCLUSIVE':
             simple_verdict = "Not enough evidence for a firm conclusion"
+        elif unified_label == 'SCREENSHOT':
+            simple_verdict = "Likely screenshot or screen capture"
 
         supports = []
         if strong_camera_origin:
             supports.append("Camera-origin metadata is strong and internally consistent.")
+        if origin_label == 'screenshot_capture':
+            supports.append("Image characteristics are consistent with a screenshot rather than a camera capture.")
+        if origin_label == 'social_media':
+            supports.append("Platform-style metadata stripping and delivery-size characteristics indicate social-media redistribution.")
         if not ts_issues:
             supports.append("No timestamp conflicts were detected.")
         if not ctx_issues:
@@ -618,7 +641,7 @@ class MetaForensicAI:
         likely_modified = bool(
             software_list
             or xmp_history_entries
-            or origin_label in {'camera_post_processed', 'software_reencoded', 'software_generated'}
+            or origin_label in {'camera_post_processed', 'software_reencoded', 'software_generated', 'screenshot_capture', 'social_media'}
             or any('software' in str(flag).lower() for flag in flags)
             or qtable_audit.get('signature_match') == 'Software_Modification'
         )
@@ -635,7 +658,7 @@ class MetaForensicAI:
             summary_parts.append(f"Software evidence: {', '.join(software_list[:3])}.")
         if xmp_history_entries:
             summary_parts.append("XMP history/edit markers were found.")
-        if origin_label in {'camera_post_processed', 'software_reencoded', 'software_generated'}:
+        if origin_label in {'camera_post_processed', 'software_reencoded', 'software_generated', 'screenshot_capture', 'social_media'}:
             summary_parts.append(f"Origin assessment indicates {origin_label.replace('_', ' ')}.")
         if ts_issues:
             summary_parts.append(f"Timestamp issues: {'; '.join(ts_issues[:3])}.")
@@ -769,16 +792,7 @@ class MetaForensicAI:
             else:
                 self.logger.info("Step 6.5: Skipped Bayesian predictive scoring (strict mode)")
             
-            # Step 6.8: Cross-Case Evidentiary Correlation (Advanced Point 16)
-            cross_case_links = {'has_cross_links': False, 'evidentiary_links': [], 'summary': 'Cross-case AI correlation disabled in strict mode'}
-            if ai_mode != 'strict':
-                self.logger.info("Step 6.8: Identifying links to historical cases...")
-                cross_case_links = self.cross_case_correlator.correlate(combined_raw)
-            else:
-                self.logger.info("Step 6.8: Skipped cross-case correlation (strict mode)")
-            
-            # Combined analysis for explanations (including cross-case links)
-            combined_analysis = {**combined_raw, 'cross_case_links': cross_case_links}
+            combined_analysis = dict(combined_raw)
             
             # Step 7: Confidence Explanation Engine (Goal 9)
             self.logger.info("Step 7: Generating human-readable forensic explanations (XAI)...")
@@ -790,7 +804,6 @@ class MetaForensicAI:
                 'metadata': extracted_metadata,
                 'risk_assessment': risk_summary,
                 'bayesian_risk': bayesian_findings,
-                'cross_case_analysis': cross_case_links,
                 'explanations': explanations,
                 'ai_mode': ai_mode,
                 'evidence_integrity': integrity_info,
@@ -1376,7 +1389,7 @@ def _evaluate_synthetic(result: Dict[str, Any], question: str, intent: str) -> D
     label = origin.get('primary_origin', 'unknown')
     if origin.get('is_synthetic') or label in {'synthetic_ai_generated', 'ai_generated'}:
         return _qa_response(question, intent, 'YES', 90, ['origin', 'metadata'], "Origin classifier indicates synthetic generation.", [f"Origin classification: {label}.", origin.get('details', 'Synthetic indicators detected.')])
-    if label in {'software_reencoded', 'software_generated', 'camera_post_processed', 'origin_unverified'}:
+    if label in {'software_reencoded', 'software_generated', 'camera_post_processed', 'origin_unverified', 'screenshot_capture', 'social_media'}:
         return _qa_response(question, intent, 'NO', 72, ['origin', 'metadata'], "Evidence indicates processing/re-encoding or unverified origin, not conclusive AI synthesis.", [f"Origin classification: {label}.", origin.get('details', 'No explicit AI provenance indicators detected.')])
     if label == 'camera_original':
         return _qa_response(question, intent, 'NO', 80, ['origin', 'metadata'], "Origin classifier favors camera-captured content.", [origin.get('details', 'Camera-origin indicators present.')])
@@ -1391,7 +1404,7 @@ def _evaluate_reencoding(result: Dict[str, Any], question: str, intent: str) -> 
     qtable_sig = artifacts.get('qtable_audit', {}).get('signature_match')
     has_compression_flag = any('compression' in str(f).lower() for f in flags)
     evidence = []
-    if label in {'software_reencoded', 'camera_post_processed'}:
+    if label in {'software_reencoded', 'camera_post_processed', 'social_media'}:
         evidence.append(f"Origin classification indicates post-capture processing: {label}.")
     if has_compression_flag:
         evidence.append("Compression-related rule flags are present.")
@@ -1407,6 +1420,10 @@ def _evaluate_camera_origin(result: Dict[str, Any], question: str, intent: str) 
     label = origin.get('primary_origin', 'unknown')
     if label in ['camera_original', 'camera_post_processed']:
         return _qa_response(question, intent, 'YES', 85, ['origin', 'metadata'], "Camera signatures are present; image may still be post-processed.", [origin.get('details', 'Camera-origin indicators detected.')])
+    if label == 'screenshot_capture':
+        return _qa_response(question, intent, 'NO', 88, ['origin', 'metadata'], "Origin classification indicates a screenshot or screen capture rather than camera acquisition.", [origin.get('details', 'Screenshot indicators detected.')])
+    if label == 'social_media':
+        return _qa_response(question, intent, 'NO', 86, ['origin', 'metadata', 'compression'], "Origin classification indicates social-media or messaging redistribution rather than direct camera-original evidence.", [origin.get('details', 'Platform redistribution indicators detected.')])
     if label in ['synthetic_ai_generated', 'ai_generated', 'software_reencoded', 'software_generated', 'origin_unverified']:
         return _qa_response(question, intent, 'NO', 78, ['origin', 'metadata'], "Origin classification does not indicate direct camera-original evidence.", [f"Origin classification: {label}."])
     return _qa_response(question, intent, 'INCONCLUSIVE', 55, ['origin', 'metadata'], "Origin classification is uncertain.", [f"Origin classification: {label}."])

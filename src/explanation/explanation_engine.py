@@ -78,6 +78,50 @@ class ConfidenceExplanationEngine:
                 'confidence': 'CRITICAL',
                 'severity': 'CRITICAL'
             })
+        elif origin_label == 'screenshot_capture':
+            screenshot_signals = origin.get('features', {}).get('raw_signals', {}).get('screenshot_signals', {})
+            explanations.append({
+                'title': 'Screenshot / Screen-Capture Identification',
+                'observation': "The image exhibits software-capture characteristics rather than optical camera-acquisition signatures.",
+                'triggers': {
+                    'Origin Classification': origin_label,
+                    'Platform Hint': origin.get('platform_fingerprint', 'N/A'),
+                    'Screenshot Signal Strength': origin.get('forensic_signals_detected', {}).get('screenshot_strength', 'N/A'),
+                    'Screen Resolution Match': screenshot_signals.get('screen_resolution_score', 'N/A'),
+                    'Timestamp Cluster': screenshot_signals.get('timestamp_cluster_score', 'N/A'),
+                },
+                'logic': "Screenshots usually lack camera EXIF, often match display resolutions, often preserve tightly clustered filesystem timestamps, and may include screenshot-oriented software identifiers or naming conventions.",
+                'significance': "This distinguishes screen-captured content from camera photographs and explains the absence of lens/sensor metadata.",
+                'causes': {
+                    'legitimate': "User captured the screen using operating-system screenshot tooling.",
+                    'malicious': "An evidentiary image may have been reproduced from a display rather than obtained as original camera output."
+                },
+                'confidence': 'HIGH',
+                'severity': 'MEDIUM'
+            })
+        elif origin_label == 'social_media':
+            social_signals = origin.get('features', {}).get('raw_signals', {}).get('social_media_signals', {})
+            explanations.append({
+                'title': 'Social Media / Messaging Redistribution Identification',
+                'observation': "The image exhibits platform-style metadata stripping, recompression, and delivery-size characteristics.",
+                'triggers': {
+                    'Origin Classification': origin_label,
+                    'Platform Hint': origin.get('platform_fingerprint', 'N/A'),
+                    'Likely Platform': social_signals.get('likely_platform', 'N/A'),
+                    'Likely Platform Confidence': social_signals.get('likely_platform_confidence', 'N/A'),
+                    'Social Media Signal Strength': origin.get('forensic_signals_detected', {}).get('social_media_strength', 'N/A'),
+                    'Platform Resolution Match': social_signals.get('platform_resolution_score', 'N/A'),
+                    'Metadata Stripping Score': social_signals.get('metadata_strip_score', 'N/A'),
+                },
+                'logic': "Images downloaded from messaging and social-media platforms often lose EXIF, are resized to standardized delivery dimensions, and are re-encoded with platform-managed JPEG compression. Platform attribution is inferred from the convergence of filename, dimensions, token matches, and recompression cues.",
+                'significance': "This indicates redistribution through a platform pipeline, which can explain missing camera metadata and recompression traces without implying original pixel tampering.",
+                'causes': {
+                    'legitimate': "The file was downloaded from WhatsApp, Instagram, Facebook, X, Snapchat, or another platform after upload.",
+                    'malicious': "A manipulated image may have been laundered through a platform pipeline to obscure its original metadata lineage."
+                },
+                'confidence': 'HIGH',
+                'severity': 'MEDIUM'
+            })
         elif origin_label == 'origin_unverified':
             explanations.append({
                 'title': 'Metadata Preservation Limitation',
@@ -170,25 +214,6 @@ class ConfidenceExplanationEngine:
                 },
                 'confidence': 'HIGH',
                 'severity': 'HIGH'
-            })
-
-        # 6. Cross-Case Intelligence (Advanced Point 16)
-        cross_links = analysis_results.get('cross_case_links', {})
-        if cross_links.get('has_cross_links'):
-            links = cross_links.get('evidentiary_links', [])
-            summary = cross_links.get('summary', '')
-            explanations.append({
-                'title': 'Historical Evidentiary Correlation',
-                'observation': summary,
-                'triggers': {'Match Count': len(links), 'Primary Link': links[0]['relationship']},
-                'logic': "Evidentiary fingerprints (Hardware Signatures/Serial Numbers) matched entries in the forensic intelligence database.",
-                'significance': "Allows investigators to link disparate investigations back to a common source or device.",
-                'causes': {
-                    'legitimate': "Multiple photographs taken by the same legitimate owner/source.",
-                    'malicious': "Discovery of a common 're-compression' engine or 'troll farm' infrastructure."
-                },
-                'confidence': 'HIGH',
-                'severity': 'MEDIUM'
             })
 
         # 7. Correlation & Conclusion

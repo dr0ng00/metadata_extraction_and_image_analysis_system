@@ -12,7 +12,6 @@ from .timestamp_analyzer import TimestampAnalyzer
 from .evidence_correlator import EvidenceCorrelator
 from .artifact_analyzer import ArtifactAnalyzer
 from .bayesian_scorer import BayesianScorer
-from .cross_case_correlator import CrossCaseCorrelator
 
 __all__ = [
     'MetadataAuthenticityAnalyzer',
@@ -21,8 +20,7 @@ __all__ = [
     'TimestampAnalyzer',
     'EvidenceCorrelator',
     'ArtifactAnalyzer',
-    'BayesianScorer',
-    'CrossCaseCorrelator'
+    'BayesianScorer'
 ]
 
 # Analysis configuration
